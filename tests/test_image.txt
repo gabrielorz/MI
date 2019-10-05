@@ -1,0 +1,124 @@
+"""
+
+Doctests of the Image module
+
+"""
+
+Basic tests  should work with the given 
+
+>>> from image import Image
+>>> import numpy as np
+>>> a = np.zeros((200, 300, 3), dtype = np.uint8)
+>>> im = Image(a, 'test_image')
+>>> im.title
+'test_image'
+>>> im.noaxis
+True
+>>> im[0, 0]
+array([0, 0, 0], dtype=uint8)
+>>> im[1, 1] = [20, 200, 100]
+>>> im[1, 1]
+array([ 20, 200, 100], dtype=uint8)
+
+Tests of basic methods
+
+>>> im.size()
+(300, 200)
+>>> im.nchannels()
+3
+
+
+Tests of create_uniform
+
+>>> im = Image.create_uniform(431, 465, (0, 120, 134))
+>>> im.title
+'Uniform'
+>>> im[100, 100]
+array([  0, 120, 134], dtype=uint8)
+
+>>> im2 = Image.create_uniform(431, 465, (0, 120, 134, 145))
+>>> im2.title
+'Uniform'
+>>> im2[100, 100]
+array([  0, 120, 134, 145], dtype=uint8)
+
+
+
+Tests of save ppm
+
+>>> import random
+>>> n = random.randint(0, 100000)
+>>> import os
+>>> name =  'test'+str(n)+'.ppm'
+>>> tmpname = os.path.join('../resources/images/', name)
+>>> im.save_ppm(tmpname)
+>>> name in os.listdir('../resources/images')
+True
+>>> os.remove(tmpname)
+
+
+Test of read_file
+
+>>> im = Image.read_file('../resources/images/brain.jpg')
+>>> im.size()
+(359, 449)
+>>> im[100, 100]
+array([69, 69, 69], dtype=uint8)
+>>> im.title
+'brain'
+
+
+Test of procedural
+
+>>> im = Image.create_procedural('ascent')
+>>> im.size()
+(512, 512)
+>>> im.nchannels()
+1
+>>> im[100, 100]
+95
+>>> im.title
+'ascent'
+
+>>> im = Image.create_procedural('astronaut')
+>>> im.size()
+(512, 512)
+>>> im[100, 100]
+array([187, 176, 169], dtype=uint8)
+>>> im.title
+'astronaut'
+
+
+Test of render
+
+
+>>> im = Image.create_uniform(100, 200, (0, 10, 100))
+>>> import matplotlib.pyplot as plt
+>>> fig, ax = plt.subplots()
+>>> ax.viewLim
+Bbox([[0.0, 0.0], [1.0, 1.0]])
+>>> im.render(ax)
+>>> ax.viewLim
+Bbox([[-0.5, 199.5], [99.5, -0.5]])
+
+
+Test of clip
+
+>>> im = Image.read_file('../resources/images/spect.png')
+>>> s = im.size() 
+>>> center =  s[0]//2, s[1]//2
+>>> radius = int(min(s[0], s[1])//4)
+>>> radius
+115
+>>> im2 = im.clip_circle(center, radius)
+>>> im2.size()
+(230, 230)
+>>> im2[0, 0]
+array([0, 0, 0, 0], dtype=uint8)
+>>> c = int(radius)
+>>> im2[c, c][3] == 255
+True
+>>> (im2[c, c][0:3] == im[center[1], center[0]][0:3]).all()
+True
+
+

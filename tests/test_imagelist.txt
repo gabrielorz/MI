@@ -1,0 +1,17 @@
+>>> from imagelist import ImageList
+>>> l = ImageList()
+>>> len(l)
+0
+>>> from image import Image
+>>> im = Image.create_uniform_RGB(200, 300, (1, 40, 50))
+>>> l.append(im)
+>>> len(l)
+1
+>>> im = Image.create_procedural('coffee')
+>>> l.append(im)
+>>> len(l)
+2
+>>> l[0].size()
+(200, 300)
+>>> str(l)
+'List of 2 images'
