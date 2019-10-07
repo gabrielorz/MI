@@ -30,48 +30,59 @@ class Image:
         while True:
             i+=1
             try:
-                self.__ima[i][j]
-                while True:
-                    j+= 1
-                    try:
-                        self.__ima[i][j]
-                    except:
-                        break
+                self.__ima[i][0]
             except:
-                return (i,j)
+                break
+        while True:
+            j += 1
+            try:
+                self.__ima[0][j]
+            except:
+                break
+        return i,j
 
+    def size_2(self):
+        ima = self.__ima
+        return ima.shape
+
+    @property
     def nchannels(self):
-        n = len(self.__ima[0, 0])
-        return n
+        return len(self.__ima[0, 0])
 
     def render(self, ax):
         ax.imshow(self.__ima)
 
     def save_ppm(self, filename):
-        pass
+        ima = self.__ima
+        "ima_header = np.insert(ima,0,['this is a file by Gabriel Garcia\n')"
+        ima.tofile(filename+".ppm", sep=" ", format="%s")
+        "ima.savetxt(filename+'.ppm', ima, fmt='%18e', delimiter=' ', header='This is a file by Gabriel Garcia')"
+        x = np.loadtxt(filename+'.ppm', delimiter=' ')
+        np.savetxt(filename+'.ppm', x, fmt='%10.5f', delimiter=' ', header='P3\n This is a file by Gabriel Garcia')
 
-    def clip_circle(self, center, radius):
+    @classmethod
+    def clip_circle(cls, center, radius, ima, color):
         radius2 = radius ** 2
-        (i,j)=self.size()
-        self.__ima = np.zeros((radius * 2, radius * 2), dtype=np.uint8)
-        for i in range(radius * 2):
-            for j in range(radius * 2):
-                if (i - center[0]) ** 2 + (j - center[1]) ** 2 >= radius2:
-                    self.__ima[i, j] = (0, 0, 0)
+        (i, j) = ima.size()
+        print(i)
+        print(j)
+        for column in range(i):
+            for row in range(j):
+                if (column - center[0]) ** 2 + (row - center[1]) ** 2 >= radius2:
+                    ima[column, row] = color
                 else:
-                    self.__ima[i, j] = self.__ima[i, j]
+                    pass
         return cls(ima, "circle")
 
     @classmethod
     def read_file(cls, filename):
-        "next week"
-        pass
+        ima = np.loadtxt(filename, dtype=np.uint8)
+        return cls(ima, filename)
 
     @classmethod
     def create_procedural(cls, name):
         ima = cls.dic_procedural[name]()
-        "next week"
-        pass
+        return cls(ima, name)
 
     @classmethod
     def create_uniform(cls, width, height, color):

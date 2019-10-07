@@ -13,6 +13,7 @@ def image_configuration(nplots):
 if __name__=='__main__':
     width, height = 500, 400
     ima = Image.create_uniform(width, height, (255, 255, 0))
+    ima.save_ppm("../resources/images/prova_1.ppm")
     nrows, ncols = image_configuration(1)
     fig, ax = create_fig(nrows, ncols)
     ima.render(ax)
