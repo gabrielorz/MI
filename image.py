@@ -39,26 +39,34 @@ class Image:
                 self.__ima[0][j]
             except:
                 break
-        return i,j
+        return j,i
 
     def size_2(self):
         ima = self.__ima
         return ima.shape
 
-    @property
     def nchannels(self):
-        return len(self.__ima[0, 0])
+        return self.__ima.shape[2]
 
     def render(self, ax):
         ax.imshow(self.__ima)
 
+    def header(self, f):
+        shape = self.size()
+        shape = str(shape[0])+" "+str(shape[1])+" \n"
+        header = "P3\n#This is a file by Gabriel Garcia.\n"+shape
+        f.write(header)
+
     def save_ppm(self, filename):
+        new_filename = filename + ".ppm"
+        fd = open(new_filename, 'w')
         ima = self.__ima
-        "ima_header = np.insert(ima,0,['this is a file by Gabriel Garcia\n')"
-        ima.tofile(filename+".ppm", sep=" ", format="%s")
+        self.header(fd)
+        ima.tofile(fd, sep=" ", format="%s")
+        fd.close()
         "ima.savetxt(filename+'.ppm', ima, fmt='%18e', delimiter=' ', header='This is a file by Gabriel Garcia')"
-        x = np.loadtxt(filename+'.ppm', delimiter=' ')
-        np.savetxt(filename+'.ppm', x, fmt='%10.5f', delimiter=' ', header='P3\n This is a file by Gabriel Garcia')
+        "x = np.loadtxt(filename+'.ppm', delimiter=' ')"
+        "np.savetxt(filename+'.ppm', x, fmt='%10.5f', delimiter=' ', header='P3\n This is a file by Gabriel Garcia')"
 
     @classmethod
     def clip_circle(cls, center, radius, ima, color):
@@ -89,7 +97,7 @@ class Image:
         nchannels = len(color)
         ima = np.zeros((height, width, nchannels), dtype=np.uint8)
         ima[:, :] = color
-        return cls(ima, 'uniform')
+        return cls(ima, 'Uniform')
 
     @classmethod
     def create_circle(cls, radius, color):
