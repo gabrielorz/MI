@@ -1,0 +1,16 @@
+>>> from image import Image
+>>> from polygonlist import PolygonList
+>>> plist = PolygonList.FromJson('../resources/vectorial/polygons_2.json')
+>>> im = Image.create_rasterization(400, 200, (200, 200, 200), plist, 'test')
+>>> im.title
+'test'
+>>> im.size()
+(400, 200)
+>>> im[0, 0]
+array([200, 200, 200], dtype=uint8)
+>>> im[20, 200]
+array([  0, 255, 255], dtype=uint8)
+>>> im[180, 50]
+array([255, 255, 100], dtype=uint8)
+ 
+

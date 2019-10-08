@@ -1,0 +1,18 @@
+>>> from box import Box2D
+>>> bb = Box2D(0, 0, 1, 1)
+>>> bb2 = bb.fitting_window(1)
+>>> print(bb2)
+(0.00,  0.00,  1.00,  1.00)
+>>> bb3 = bb.fitting_window(0.5)
+>>> print(bb3)
+(0.00,  -0.50,  1.00,  1.50)
+>>> bb4 = bb.fitting_window(2)
+>>> print(bb4)
+(-0.50, 0.00, 1.50, 1.00)
+>>> bb5 = bb4.fitting_window(2)
+>>> print(bb5)
+(-0.50, 0.00, 1.50, 1.00)
+>>> bb6 = bb4.fitting_window(3/2)
+>>> print(bb6)
+(-0.50, -0.17, 1.50, 1.17)
+
