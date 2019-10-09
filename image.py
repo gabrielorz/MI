@@ -68,15 +68,15 @@ class Image:
     @classmethod
     def clip_circle(cls, center, radius, image):
         radius2 = radius ** 2
-        nchannels = len(image[0, 0])
-        ima = np.zeros((2*radius, 2*radius, nchannels), dtype=np.uint8)
-        """for column in range(-radius: radius):
-            for row in range(-radius: radius):
-                ima[column,row] = image[column,row]"""
-        for column in range(2*radius):
-            for row in range(2*radius):
-                if (column - radius) ** 2 + (row - radius) ** 2 >= radius2:
-                    ima[column, row] = (0, 0, 0)
+        """n_channels = image.size_2()[2]"""
+        """alpha_channel = np.zeros((image.size()[0], image.size()[1], 1), dtype = np.uint8)"""
+        """alpha_image = np.dstack((image, alpha_channel))"""
+        alpha_image = image
+        ima = np.zeros((2*radius, 2*radius, 3), dtype=np.uint8)
+        for i in range(radius * 2):
+            for j in range(radius * 2):
+                if (i - radius) ** 2 + (j - radius) ** 2 <= radius2:
+                    ima[i, j] = alpha_image[(center[0]+i-radius), (center[1]+j-radius)]
                 else:
                     pass
         return cls(ima, "circle")
