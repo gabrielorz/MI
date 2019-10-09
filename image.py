@@ -28,7 +28,7 @@ class Image:
         i=0
         j=0
         while True:
-            i+=1
+            i +=1
             try:
                 self.__ima[i][0]
             except:
@@ -39,7 +39,7 @@ class Image:
                 self.__ima[0][j]
             except:
                 break
-        return j,i
+        return j, i
 
     def size_2(self):
         ima = self.__ima
@@ -66,13 +66,17 @@ class Image:
         fd.close()
 
     @classmethod
-    def clip_circle(cls, center, radius, ima, color):
+    def clip_circle(cls, center, radius, image):
         radius2 = radius ** 2
-        (i, j) = ima.size()
-        for column in range(i):
-            for row in range(j):
-                if (column - center[0]) ** 2 + (row - center[1]) ** 2 >= radius2:
-                    ima[column, row] = color
+        nchannels = len(image[0, 0])
+        ima = np.zeros((2*radius, 2*radius, nchannels), dtype=np.uint8)
+        """for column in range(-radius: radius):
+            for row in range(-radius: radius):
+                ima[column,row] = image[column,row]"""
+        for column in range(2*radius):
+            for row in range(2*radius):
+                if (column - radius) ** 2 + (row - radius) ** 2 >= radius2:
+                    ima[column, row] = (0, 0, 0)
                 else:
                     pass
         return cls(ima, "circle")
