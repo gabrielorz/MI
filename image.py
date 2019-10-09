@@ -54,7 +54,7 @@ class Image:
     def header(self, f):
         shape = self.size()
         shape = str(shape[0])+" "+str(shape[1])+" \n"
-        header = "P3\n#This is a file by Gabriel Garcia.\n"+shape
+        header = "P3\n# This is a file by Gabriel Garcia.\n"+shape+"255\n"
         f.write(header)
 
     def save_ppm(self, filename):
@@ -64,16 +64,11 @@ class Image:
         self.header(fd)
         ima.tofile(fd, sep=" ", format="%s")
         fd.close()
-        "ima.savetxt(filename+'.ppm', ima, fmt='%18e', delimiter=' ', header='This is a file by Gabriel Garcia')"
-        "x = np.loadtxt(filename+'.ppm', delimiter=' ')"
-        "np.savetxt(filename+'.ppm', x, fmt='%10.5f', delimiter=' ', header='P3\n This is a file by Gabriel Garcia')"
 
     @classmethod
     def clip_circle(cls, center, radius, ima, color):
         radius2 = radius ** 2
         (i, j) = ima.size()
-        print(i)
-        print(j)
         for column in range(i):
             for row in range(j):
                 if (column - center[0]) ** 2 + (row - center[1]) ** 2 >= radius2:
