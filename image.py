@@ -65,21 +65,29 @@ class Image:
         ima.tofile(fd, sep=" ", format="%s")
         fd.close()
 
-    @classmethod
-    def clip_circle(cls, center, radius, image):
+    def clip_circle(self, center, radius):
         radius2 = radius ** 2
-        """n_channels = image.size_2()[2]"""
-        """alpha_channel = np.zeros((image.size()[0], image.size()[1], 1), dtype = np.uint8)"""
-        """alpha_image = np.dstack((image, alpha_channel))"""
-        alpha_image = image
-        ima = np.zeros((2*radius, 2*radius, 3), dtype=np.uint8)
+        image = self.__ima
+        n_channels = image.shape[2]
+        alpha_channel = 255*np.ones((image.shape[0], image.shape[1], 1), dtype=np.uint8)
+        alpha_image = np.dstack((image, alpha_channel))
+        clipped_circle = np.zeros((2*radius, 2*radius, 4), dtype=np.uint8)
         for i in range(radius * 2):
             for j in range(radius * 2):
                 if (i - radius) ** 2 + (j - radius) ** 2 <= radius2:
-                    ima[i, j] = alpha_image[(center[0]+i-radius), (center[1]+j-radius)]
+                    clipped_circle[i, j] = alpha_image[(center[0]+i-radius), (center[1]+j-radius)]
                 else:
-                    pass
-        return cls(ima, "circle")
+                    clipped_circle[i, j] = (0, 0, 0, 0)
+        clipped_circle = Image.convert_numpy_to_image(clipped_circle, 'clipped circle')
+        return clipped_circle
+
+    @classmethod
+    def convert_numpy_to_image(cls, image, title):
+        ima = np.zeros((image.shape[0], image.shape[1], image.shape[2]), dtype=np.uint8)
+        for i in range(image.shape[0]):
+            for j in range(image.shape[1]):
+                ima[i, j] = image[i, j]
+        return cls(image, title)
 
     @classmethod
     def read_file(cls, filename):
