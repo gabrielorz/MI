@@ -2,8 +2,9 @@ from scipy import misc
 from skimage import data
 from scipy import misc
 import numpy as np
+from PIL import Image as img
 import os
-
+import io
 
 class Image:
     dic_procedural = {'coffee': data.coffee, 'astronaut': data.astronaut, 'ascent': misc.ascent, 'face': misc.face}
@@ -97,8 +98,11 @@ class Image:
 
     @classmethod
     def read_file(cls, filename):
-        ima = np.loadtxt(filename, dtype=np.uint8)
-        return cls(ima, filename)
+        image_string = open(filename, 'rb').read()
+        image = img.open(io.BytesIO(image_string))
+        """ima = np.loadtxt(filename, dtype=np.uint8)"""
+        arr = np.asarray(image)
+        return cls(arr, filename)
 
     @classmethod
     def create_procedural(cls, name):
