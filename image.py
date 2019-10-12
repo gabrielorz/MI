@@ -75,16 +75,24 @@ class Image:
     def clip_circle(self, center, radius):
         radius2 = radius ** 2
         image = self.__ima
-        n_channels = image.shape[2]
+        n_channels = self.nchannels()
         alpha_channel = 255*np.ones((image.shape[0], image.shape[1], 1), dtype=np.uint8)
         alpha_image = np.dstack((image, alpha_channel))
-        clipped_circle = np.zeros((2*radius, 2*radius, 4), dtype=np.uint8)
+        if n_channels == 1 or n_channels == 3:
+            clipped_circle = np.zeros((2*radius, 2*radius, n_channels+1), dtype=np.uint8)
+        elif n_channels == 2 or n_channels == 4:
+            clipped_circle = np.zeros((2 * radius, 2 * radius, n_channels), dtype=np.uint8)
+        else:
+            print('what is this image dude')
         for i in range(radius * 2):
             for j in range(radius * 2):
                 if (i - radius) ** 2 + (j - radius) ** 2 <= radius2:
                     clipped_circle[i, j] = alpha_image[(center[0]+i-radius), (center[1]+j-radius)]
                 else:
-                    clipped_circle[i, j] = (0, 0, 0, 0)
+                    if n_channels == 1:
+                        clipped_circle[i, j] = (0, 0)
+                    else:
+                        clipped_circle[i, j] = (0, 0, 0, 0)
         clipped_circle = Image.convert_numpy_to_image(clipped_circle, 'clipped circle')
         return clipped_circle
 
