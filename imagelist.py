@@ -2,11 +2,14 @@
 A class containing a list of images
 
 """
+
+
 class ImageList:
-    def __init__(self) :
+
+    def __init__(self):
         self.__images = []
 
-    def __getitem__(self, i) :
+    def __getitem__(self, i):
         return self.__images[i]
 
     def __setitem__(self, i, ima):

@@ -46,7 +46,13 @@ class Image:
         return ima.shape
 
     def nchannels(self):
-        return self.__ima.shape[2]
+        length = self.__ima
+        dimensions = length.shape
+        if len(dimensions) == 2:
+            channels = 1
+        else:
+            channels = dimensions[2]
+        return channels
 
     def render(self, ax):
         ax.imshow(self.__ima)
@@ -58,7 +64,7 @@ class Image:
         f.write(header)
 
     def save_ppm(self, filename):
-        new_filename = filename + ".ppm"
+        new_filename = filename + '.ppm'
         fd = open(new_filename, 'w')
         ima = self.__ima
         self.header(fd)
@@ -83,7 +89,7 @@ class Image:
 
     @classmethod
     def convert_numpy_to_image(cls, image, title):
-        ima = np.zeros((image.shape[0], image.shape[1], image.shape[2]), dtype=np.uint8)
+        ima = np.zeros((image.shape[0], image.shape[1], len(image[0, 0])), dtype=np.uint8)
         for i in range(image.shape[0]):
             for j in range(image.shape[1]):
                 ima[i, j] = image[i, j]
