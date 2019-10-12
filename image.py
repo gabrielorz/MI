@@ -64,7 +64,7 @@ class Image:
         f.write(header)
 
     def save_ppm(self, filename):
-        new_filename = filename + '.ppm'
+        new_filename = filename
         fd = open(new_filename, 'w')
         ima = self.__ima
         self.header(fd)
