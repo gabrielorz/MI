@@ -99,8 +99,10 @@ class Image:
         image_string = open(filename, 'rb').read()
         image = IMG.open(io.BytesIO(image_string))
         arr = np.asarray(image)
-
-        return cls(arr, filename)
+        name = os.path.splitext(filename)[0]
+        path = name.rstrip(os.sep)
+        name = os.path.basename(path)
+        return cls(arr, name)
 
     @classmethod
     def create_procedural(cls, name):
