@@ -57,7 +57,7 @@ class Image:
     def render(self, ax):
         ax.imshow(self.__ima)
 
-    def header(self, f):
+    def header_ppm(self, f):
         shape = self.size()
         shape = str(shape[0])+" "+str(shape[1])+" \n"
         header = "P3\n# This is a file by Gabriel Garcia.\n"+shape+"255\n"
@@ -67,7 +67,7 @@ class Image:
         new_filename = filename
         fd = open(new_filename, 'w')
         ima = self.__ima
-        self.header(fd)
+        self.header_ppm(fd)
         ima.tofile(fd, sep=" ", format="%s")
         fd.close()
 

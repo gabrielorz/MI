@@ -50,16 +50,16 @@ Tests of save ppm
 >>> n = random.randint(0, 100000)
 >>> import os
 >>> name =  'test'+str(n)+'.ppm'
->>> tmpname = os.path.join('../resources/images/', name)
+>>> tmpname = os.path.join('./resources/images/', name)
 >>> im.save_ppm(tmpname)
->>> name in os.listdir('../resources/images')
+>>> name in os.listdir('./resources/images')
 True
 >>> os.remove(tmpname)
 
 
 Test of read_file
 
->>> im = Image.read_file('../resources/images/brain.jpg')
+>>> im = Image.read_file('./resources/images/brain.jpg')
 >>> im.size()
 (359, 449)
 >>> im[100, 100]
@@ -104,7 +104,7 @@ Bbox([[-0.5, 199.5], [99.5, -0.5]])
 
 Test of clip
 
->>> im = Image.read_file('../resources/images/spect.png')
+>>> im = Image.read_file('./resources/images/spect.png')
 >>> s = im.size() 
 >>> center =  s[0]//2, s[1]//2
 >>> radius = int(min(s[0], s[1])//4)
