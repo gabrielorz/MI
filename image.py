@@ -2,9 +2,10 @@ from scipy import misc
 from skimage import data
 from scipy import misc
 import numpy as np
-from PIL import Image as img
+from PIL import Image as IMG
 import os
 import io
+
 
 class Image:
     dic_procedural = {'coffee': data.coffee, 'astronaut': data.astronaut, 'ascent': misc.ascent, 'face': misc.face}
@@ -26,20 +27,9 @@ class Image:
         self.__ima[i][j] = color
 
     def size(self):
-        i=0
-        j=0
-        while True:
-            i +=1
-            try:
-                self.__ima[i][0]
-            except:
-                break
-        while True:
-            j += 1
-            try:
-                self.__ima[0][j]
-            except:
-                break
+        ima = self.__ima
+        i = ima.shape[0]
+        j = ima.shape[1]
         return j, i
 
     def size_2(self):
@@ -60,8 +50,8 @@ class Image:
 
     def header_ppm(self, f):
         shape = self.size()
-        shape = str(shape[0])+" "+str(shape[1])+" \n"
-        header = "P3\n# This is a file by Gabriel Garcia.\n"+shape+"255\n"
+        shape = str(shape[0]) + " " + str(shape[1]) + " \n"
+        header = "P3\n# This is a file by Gabriel Garcia.\n" + shape + "255\n"
         f.write(header)
 
     def save_ppm(self, filename):
@@ -76,10 +66,10 @@ class Image:
         radius2 = radius ** 2
         image = self.__ima
         n_channels = self.nchannels()
-        alpha_channel = 255*np.ones((image.shape[0], image.shape[1], 1), dtype=np.uint8)
+        alpha_channel = 255 * np.ones((image.shape[0], image.shape[1], 1), dtype=np.uint8)
         alpha_image = np.dstack((image, alpha_channel))
         if n_channels == 1 or n_channels == 3:
-            clipped_circle = np.zeros((2*radius, 2*radius, n_channels+1), dtype=np.uint8)
+            clipped_circle = np.zeros((2 * radius, 2 * radius, n_channels + 1), dtype=np.uint8)
         elif n_channels == 2 or n_channels == 4:
             clipped_circle = np.zeros((2 * radius, 2 * radius, n_channels), dtype=np.uint8)
         else:
@@ -87,7 +77,7 @@ class Image:
         for i in range(radius * 2):
             for j in range(radius * 2):
                 if (i - radius) ** 2 + (j - radius) ** 2 <= radius2:
-                    clipped_circle[i, j] = alpha_image[(center[0]+i-radius), (center[1]+j-radius)]
+                    clipped_circle[i, j] = alpha_image[(center[0] + i - radius), (center[1] + j - radius)]
                 else:
                     if n_channels == 1:
                         clipped_circle[i, j] = (0, 0)
@@ -107,9 +97,9 @@ class Image:
     @classmethod
     def read_file(cls, filename):
         image_string = open(filename, 'rb').read()
-        image = img.open(io.BytesIO(image_string))
-        """ima = np.loadtxt(filename, dtype=np.uint8)"""
+        image = IMG.open(io.BytesIO(image_string))
         arr = np.asarray(image)
+
         return cls(arr, filename)
 
     @classmethod
