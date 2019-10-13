@@ -38,11 +38,10 @@ if __name__ == '__main__':
     for row in range(nrows):
         for col in range(ncols):
             images[n].render(ax[row, col])
-            ax[row,col].title.set_text(images[n].title)
+            ax[row, col].title.set_text(images[n].title)
+            plt.axis('off')
             n = n+1
             if n >= len(images):
                 break
-    plt.axis('off')
-    plt.show()
 
 
