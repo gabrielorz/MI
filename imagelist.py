@@ -2,7 +2,7 @@
 A class containing a list of images
 
 """
-
+import image
 
 class ImageList:
 
@@ -30,7 +30,7 @@ class ImageList:
         n = 0
         for row in range(nrows):
             for col in range(ncols):
-                ax[row, col].imshow(self.__images[n])
+                self.__images[n].render(ax[row, col])
                 ax[row, col].title.set_text(self.__images[n].title)
                 ax[row, col].axis('off')
                 n = n + 1
