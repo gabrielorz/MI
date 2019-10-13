@@ -25,6 +25,9 @@ class ImageList:
         self.__images.append(ima)
     
     def render(self, ax):
+        if len(self.__images) == 1:
+            self.__images[0].render(ax)
+            return
         nrows = ax.shape[0]
         ncols = ax.shape[1]
         n = 0
