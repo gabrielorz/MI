@@ -39,6 +39,7 @@ if __name__ == '__main__':
         for col in range(ncols):
             images[n].render(ax[row, col])
             ax[row, col].title.set_text(images[n].title)
+            ax[row, col].axis('off')
             n = n+1
             if n >= len(images):
                 break
