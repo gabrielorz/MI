@@ -39,6 +39,8 @@ if __name__ == '__main__':
         for col in range(ncols):
             images[n].render(ax[row, col])
             n = n+1
+            if n >= len(images):
+                break
     plt.show()
 
 
