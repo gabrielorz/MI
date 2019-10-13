@@ -43,5 +43,5 @@ if __name__ == '__main__':
             n = n+1
             if n >= len(images):
                 break
-    plt.imshow()
+    plt.show()
 
