@@ -24,7 +24,7 @@ def image_configuration(nplots):
 if __name__ == '__main__':
 
     width, height = 500, 300
-    color = (255,255, 0)
+    color = (255, 255, 0)
     images = ImageList()
     images.append(Image.create_uniform(width, height, (255, 255, 0)))
     images.append(Image.create_procedural('coffee'))
@@ -41,7 +41,7 @@ if __name__ == '__main__':
             ax[row, col].title.set_text(images[n].title)
             ax[row, col].axis('off')
             n = n+1
-            if n >= len(images):
+            if n >= len(images) - 1:
                 break
     plt.show()
 
