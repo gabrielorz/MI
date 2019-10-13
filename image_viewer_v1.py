@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from image import Image
+from imagelist import ImageList
 
 
 def create_fig(nrows, ncols):
@@ -10,16 +11,30 @@ def create_fig(nrows, ncols):
 
 
 def image_configuration(nplots):
-    return 1, 1
+    rows = 1
+    cols = 1
+    while rows*cols < nplots:
+        if cols <= rows:
+            cols = cols + 1
+        else:
+            rows = rows + 1
+    return rows, cols
 
 
-if __name__=='__main__':
-    width, height = 500, 400
-    ima = Image.create_uniform(width, height, (255, 255, 0))
-    ima.save_ppm('../resources/images/prova')
-    nrows, ncols = image_configuration(1)
+if __name__ == '__main__':
+
+    width, height = 500, 300
+    color = (255,255, 0)
+    images = ImageList()
+    images.append(Image.create_uniform(width, height, (255, 255, 0)))
+    images.append(Image.create_procedural('coffee'))
+    images.append(Image.create_procedural('face'))
+    images.append(Image.create_procedural('astronaut'))
+    images.append(Image.create_procedural('ascent'))
+    """ima.save_ppm('../resources/images/prova')"""
+    nrows, ncols = image_configuration(len(images))
     fig, ax = create_fig(nrows, ncols)
-    ima.render(ax)
+    images.render(ax)
     plt.show()
 
 

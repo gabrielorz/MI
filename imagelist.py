@@ -25,4 +25,5 @@ class ImageList:
         self.__images.append(ima)
     
     def render(self, ax):
+
         pass

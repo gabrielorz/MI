@@ -3,7 +3,7 @@
 >>> len(l)
 0
 >>> from image import Image
->>> im = Image.create_uniform_RGB(200, 300, (1, 40, 50))
+>>> im = Image.create_uniform(200, 300, (1, 40, 50))
 >>> l.append(im)
 >>> len(l)
 1
