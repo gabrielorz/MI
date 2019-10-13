@@ -65,6 +65,8 @@ class Image:
     def clip_circle(self, center, radius):
         radius2 = radius ** 2
         image = self.__ima
+        imax = image.size()[0]
+        jmax = image.size()[1]
         n_channels = self.nchannels()
         alpha_channel = 255 * np.ones((image.shape[0], image.shape[1], 1), dtype=np.uint8)
         alpha_image = np.dstack((image, alpha_channel))
@@ -76,7 +78,7 @@ class Image:
             print('what is this image dude')
         for i in range(radius * 2):
             for j in range(radius * 2):
-                if (i - radius) ** 2 + (j - radius) ** 2 <= radius2:
+                if (i - radius) ** 2 + (j - radius) ** 2 <= radius2 and i < imax and j < jmax:
                     clipped_circle[i, j] = alpha_image[(center[0] + i - radius), (center[1] + j - radius)]
                 else:
                     if n_channels == 1:
