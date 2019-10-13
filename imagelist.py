@@ -25,5 +25,15 @@ class ImageList:
         self.__images.append(ima)
     
     def render(self, ax):
-
-        pass
+        nrows = ax.shape[0]
+        ncols = ax.shape[1]
+        n = 0
+        for row in range(nrows):
+            for col in range(ncols):
+                self[n].render(ax[row, col])
+                ax.imshow(self[n])
+                ax[row, col].title.set_text(self[n].title)
+                ax[row, col].axis('off')
+                n = n + 1
+                if n > len(self) - 1:
+                    break

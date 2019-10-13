@@ -34,14 +34,6 @@ if __name__ == '__main__':
     """ima.save_ppm('../resources/images/prova')"""
     nrows, ncols = image_configuration(len(images))
     fig, ax = create_fig(nrows, ncols)
-    n = 0
-    for row in range(nrows):
-        for col in range(ncols):
-            images[n].render(ax[row, col])
-            ax[row, col].title.set_text(images[n].title)
-            ax[row, col].axis('off')
-            n = n+1
-            if n > len(images) - 1:
-                break
+    images.render(ax)
     plt.show()
 
