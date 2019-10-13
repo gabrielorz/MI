@@ -31,8 +31,6 @@ class ImageList:
         for row in range(nrows):
             for col in range(ncols):
                 self.__images[n].render(ax[row, col])
-                ax[row, col].title.set_text(self.__images[n].title)
-                ax[row, col].axis('off')
                 n = n + 1
                 if n > len(self) - 1:
                     break
