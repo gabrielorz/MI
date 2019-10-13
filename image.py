@@ -64,31 +64,69 @@ class Image:
 
     def clip_circle(self, center, radius):
         radius2 = radius ** 2
-        image = self.__ima
-        size = self.size()
-        i_max = size[0]
-        j_max = size[1]
-        n_channels = self.nchannels()
-        alpha_channel = 255 * np.ones((image.shape[0], image.shape[1], 1), dtype=np.uint8)
-        if n_channels == 2 or n_channels == 4:
-            alpha_image = image
-            clipped_circle = np.zeros((2 * radius, 2 * radius, n_channels), dtype=np.uint8)
-            zero_color = np.zeros((1, n_channels), dtype=np.uint8)
-        elif n_channels == 1 or n_channels == 3:
-            clipped_circle = np.zeros((2 * radius, 2 * radius, n_channels + 1), dtype=np.uint8)
-            alpha_image = np.dstack((image, alpha_channel))
-            zero_color = np.zeros((1, n_channels+1), dtype=np.uint8)
-        else:
-            return print('what is this image dude')
+        alpha_image = self.add_alpha_channel(255)
+        clipped_circle = np.zeros((2*radius, 2*radius, alpha_image.shape[2]), dtype=np.uint8)
+        i_max = alpha_image.shape[0]
+        j_max = alpha_image.shape[1]
+        zero_color = np.zeros(alpha_image.shape[2], dtype=np.uint8)
         for i in range(radius * 2):
             for j in range(radius * 2):
-                if (i - radius) ** 2 + (j - radius) ** 2 <= radius2 and i < i_max and j < j_max:
-                    clipped_circle[i, j] = alpha_image[(center[0] + i - radius), (center[1] + j - radius)]
+                pos1 = center[0] + i - radius
+                pos2 = center[1] + j - radius
+                if (i - radius) ** 2 + (j - radius) ** 2 <= radius2 and i < i_max and j < j_max and pos1 > 0 and pos2 > 0:
+                    clipped_circle[i, j] = alpha_image[pos1, pos2]
                     clipped_circle[i, j][3] = 255
                 else:
                     clipped_circle[i, j] = zero_color
         clipped_circle = Image.convert_numpy_to_image(clipped_circle, 'clipped circle')
         return clipped_circle
+
+    def transform_image_to_numpy(self):
+        image = self.__ima
+        size = self.size()
+        i_max = size[0]
+        j_max = size[1]
+        n_channels = self.nchannels()
+        numpy_image = np.zeros((j_max, i_max, n_channels), dtype=np.uint8)
+        for i in range(i_max):
+            for j in range(j_max):
+                numpy_image[j, i] = image[j, i]
+        return numpy_image
+
+    def add_alpha_channel(self, value):
+        image = self.__ima
+        n_channels = self.nchannels()
+        alpha_channel = value * np.ones((image.shape[0], image.shape[1], 1), dtype=np.uint8)
+        if n_channels == 2 or n_channels == 4:
+            alpha_image = image
+        elif n_channels == 1 or n_channels == 3:
+            alpha_image = np.dstack((image, alpha_channel))
+        else:
+            return print('what is this image dude')
+        return alpha_image
+
+    def clip_circle_2(self, center, radius):
+        img = self.add_alpha_channel(255)
+        mask = self.create_circular_mask(center, radius)
+        masked_img = img.copy()
+        masked_img[~mask] = 0
+        masked_img = Image.convert_numpy_to_image(masked_img, 'clipped circle')
+        return masked_img
+
+    def create_circular_mask(self, center=None, radius=None):
+        size = self.size()
+        h = size[1]
+        w = size[0]
+        if center is None:  # use the middle of the image
+            center = [int(w / 2), int(h / 2)]
+        if radius is None:  # use the smallest distance between the center and image walls
+            radius = min(center[0], center[1], w - center[0], h - center[1])
+
+        Y, X = np.ogrid[:h, :w]
+        dist_from_center = np.sqrt((X - center[0]) ** 2 + (Y - center[1]) ** 2)
+
+        mask = dist_from_center <= radius
+        return mask
 
     @classmethod
     def convert_numpy_to_image(cls, image, title):
