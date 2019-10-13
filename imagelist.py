@@ -30,8 +30,7 @@ class ImageList:
         n = 0
         for row in range(nrows):
             for col in range(ncols):
-                self[n].render(ax[row, col])
-                ax.imshow(self[n])
+                ax[row, col].imshow(self[n])
                 ax[row, col].title.set_text(self[n].title)
                 ax[row, col].axis('off')
                 n = n + 1
