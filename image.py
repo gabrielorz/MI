@@ -47,7 +47,6 @@ class Image:
 
     def render(self, ax):
         ax.imshow(self.__ima)
-        ax.axis('off')
 
     def header_ppm(self, f):
         shape = self.size()

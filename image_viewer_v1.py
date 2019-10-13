@@ -41,7 +41,7 @@ if __name__ == '__main__':
             ax[row, col].title.set_text(images[n].title)
             ax[row, col].axis('off')
             n = n+1
-            if n >= len(images) - 1:
+            if n > len(images) - 1:
                 break
     plt.show()
 
