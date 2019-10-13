@@ -30,8 +30,8 @@ class ImageList:
         n = 0
         for row in range(nrows):
             for col in range(ncols):
-                ax[row, col].imshow(self[n])
-                ax[row, col].title.set_text(self[n].title)
+                ax[row, col].imshow(self.__images[n])
+                ax[row, col].title.set_text(self.__images[n].title)
                 ax[row, col].axis('off')
                 n = n + 1
                 if n > len(self) - 1:
