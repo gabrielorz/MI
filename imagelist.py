@@ -34,4 +34,4 @@ class ImageList:
                     self.__images[n].render(ax[row, col])
                     n = n + 1
                 else:
-                    ax[row, col].flat[-1].set_visible(False)
+                    ax[row, col].set_axis_off()
