@@ -2,7 +2,7 @@
 A class containing a list of images
 
 """
-import image
+
 
 class ImageList:
 
@@ -30,7 +30,8 @@ class ImageList:
         n = 0
         for row in range(nrows):
             for col in range(ncols):
-                self.__images[n].render(ax[row, col])
-                n = n + 1
-                if n > len(self) - 1:
-                    break
+                if n <= len(self) - 1:
+                    self.__images[n].render(ax[row, col])
+                    n = n + 1
+                else:
+                    ax[row, col].flat[-1].set_visible(False)

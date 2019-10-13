@@ -49,7 +49,6 @@ class Image:
         ax.imshow(self.__ima)
         ax.title.set_text(self.title)
         ax.axis('off')
-        return
 
     def header_ppm(self, f):
         shape = self.size()
