@@ -65,26 +65,28 @@ class Image:
     def clip_circle(self, center, radius):
         radius2 = radius ** 2
         image = self.__ima
-        imax = image.size()[0]
-        jmax = image.size()[1]
+        size = self.size()
+        i_max = size[0]
+        j_max = size[1]
         n_channels = self.nchannels()
         alpha_channel = 255 * np.ones((image.shape[0], image.shape[1], 1), dtype=np.uint8)
-        alpha_image = np.dstack((image, alpha_channel))
-        if n_channels == 1 or n_channels == 3:
-            clipped_circle = np.zeros((2 * radius, 2 * radius, n_channels + 1), dtype=np.uint8)
-        elif n_channels == 2 or n_channels == 4:
+        if n_channels == 2 or n_channels == 4:
+            alpha_image = image
             clipped_circle = np.zeros((2 * radius, 2 * radius, n_channels), dtype=np.uint8)
+            zero_color = np.zeros((1, n_channels), dtype=np.uint8)
+        elif n_channels == 1 or n_channels == 3:
+            clipped_circle = np.zeros((2 * radius, 2 * radius, n_channels + 1), dtype=np.uint8)
+            alpha_image = np.dstack((image, alpha_channel))
+            zero_color = np.zeros((1, n_channels+1), dtype=np.uint8)
         else:
-            print('what is this image dude')
+            return print('what is this image dude')
         for i in range(radius * 2):
             for j in range(radius * 2):
-                if (i - radius) ** 2 + (j - radius) ** 2 <= radius2 and i < imax and j < jmax:
+                if (i - radius) ** 2 + (j - radius) ** 2 <= radius2 and i < i_max and j < j_max:
                     clipped_circle[i, j] = alpha_image[(center[0] + i - radius), (center[1] + j - radius)]
+                    clipped_circle[i, j][3] = 255
                 else:
-                    if n_channels == 1:
-                        clipped_circle[i, j] = (0, 0)
-                    else:
-                        clipped_circle[i, j] = (0, 0, 0, 0)
+                    clipped_circle[i, j] = zero_color
         clipped_circle = Image.convert_numpy_to_image(clipped_circle, 'clipped circle')
         return clipped_circle
 
