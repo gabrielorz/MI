@@ -35,8 +35,8 @@ if __name__ == '__main__':
     nrows, ncols = image_configuration(len(images))
     fig, ax = create_fig(nrows, ncols)
     n = 0
-    for row in range(nrows):
-        for j in range(ncols):
+    for row in range(ncols):
+        for j in range(nrows):
             images[n].render(ax[nrows, ncols])
             n = n+1
     plt.show()
