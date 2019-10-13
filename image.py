@@ -105,13 +105,22 @@ class Image:
             return print('what is this image dude')
         return alpha_image
 
-    def clip_circle_2(self, center, radius):
+    def clip_circle_smart(self, center, radius):
         img = self.add_alpha_channel(255)
         mask = self.create_circular_mask(center, radius)
         masked_img = img.copy()
         masked_img[~mask] = 0
-        masked_img = Image.convert_numpy_to_image(masked_img, 'clipped circle')
-        return masked_img
+        w, h = 0, 0
+        for i in range (masked_img.shape[0]):
+            for j in range(masked_img.shape[1]):
+                if mask[i, j] and j >= w and j >=i:
+                    w = j
+                if mask[i, j] and i >= h and i >= j:
+                    h = i
+        cropped_masked_img = np.zeros((h, w, masked_img.shape[2]), dtype=np.uint8)
+        cropped_masked_img[:, :] = masked_img[0:h, 0:w]
+        cropped = Image.convert_numpy_to_image(cropped_masked_img, 'clipped_circle_smart'+'_'+self.title)
+        return cropped
 
     def create_circular_mask(self, center=None, radius=None):
         size = self.size()

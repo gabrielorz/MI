@@ -118,8 +118,7 @@ array([0, 0, 0, 0], dtype=uint8)
 >>> c = int(radius)
 >>> im2[c, c][3] == 255
 True
->>> (im2[c, c][0:3] == im[center[0], center[1
-]][0:3]).all()
+>>> (im2[c, c][0:3] == im[center[0], center[1]][0:3]).all()
 True
 
 
