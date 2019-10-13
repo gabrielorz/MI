@@ -34,8 +34,8 @@ if __name__ == '__main__':
     images.append(Image.read_file('./resources/images/spect.png'))
     images.append(Image.read_file('./resources/images/brain.jpg'))
     images.append(Image.read_file('./resources/images/spect.png'))
-    images.append(Image.create_circle(100, (255, 0, 0)))
-    images.append(Image.create_circle(100, (255, 0, 0)))
+    images.append(Image.create_circle(100, (255, 0, 0, 0)))
+    images.append(Image.create_circle(100, (255, 0, 0, 0)))
     """ima.save_ppm('../resources/images/prova')"""
     nrows, ncols = image_configuration(len(images))
     fig, ax = create_fig(nrows, ncols)
