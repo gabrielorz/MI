@@ -46,6 +46,7 @@ class Image:
         return channels
 
     def render(self, ax):
+        ax.axis('off')
         ax.imshow(self.__ima)
 
     def header_ppm(self, f):
