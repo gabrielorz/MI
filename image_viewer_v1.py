@@ -32,7 +32,7 @@ if __name__ == '__main__':
     images.append(Image.create_procedural('astronaut'))
     images.append(Image.create_procedural('ascent'))
     images.append(Image.read_file('./resources/images/spect.png'))
-    images.append(Image.read_file('./resources/images/brain.pnm'))
+    images.append(Image.read_file('./resources/images/brain.jpg'))
     images.append(Image.read_file('./resources/images/spect.png'))
     images.append(Image.create_circle(100, (255)))
     """ima.save_ppm('../resources/images/prova')"""
