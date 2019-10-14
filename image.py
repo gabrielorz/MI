@@ -75,7 +75,7 @@ class Image:
             for j in range(radius * 2):
                 pos1 = center[0] + i - radius
                 pos2 = center[1] + j - radius
-                if (i - radius) ** 2 + (j - radius) ** 2 <= radius2 and i < i_max and j < j_max and pos1 > 0 and pos2 > 0:
+                if (i - radius) ** 2 + (j - radius) ** 2 <= radius2 and i < i_max and j < j_max and i_max > pos1 > 0 and j_max > pos2 > 0:
                     clipped_circle[i, j] = alpha_image[pos1, pos2]
                     clipped_circle[i, j][3] = 255
                 else:
