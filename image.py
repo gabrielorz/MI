@@ -8,7 +8,7 @@ import io
 
 
 class Image:
-    dic_procedural = {'coffee': data.coffee, 'astronaut': data.astronaut, 'ascent': misc.ascent, 'face': misc.face, 'brick': data.brick, 'camera': data.camera, 'cell': data.cell, 'checkerboard': data.checkerboard, 'clock': data.clock, 'coins': data.coins, 'colorwheel': data.colorwheel, 'grass': data.grass, 'gravel': data.gravel, 'horse': data.horse}
+    dic_procedural = {'coffee': data.coffee, 'astronaut': data.astronaut, 'ascent': misc.ascent, 'face': misc.face, 'camera': data.camera,  'checkerboard': data.checkerboard, 'clock': data.clock, 'coins': data.coins,  'horse': data.horse}
 
     def __init__(self, ima, title):
         self.title = title
