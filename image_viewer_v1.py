@@ -1,3 +1,5 @@
+""" AUTHOR: GABRIEL GARCIA """
+
 import matplotlib.pyplot as plt
 from image import Image
 from imagelist import ImageList
