@@ -44,7 +44,12 @@ class MainWindow(QMainWindow):
     
     def create_selection_menu(self):
         self.menuSelection = self.menubar.addMenu('Selection')
-        
+        for i in range(len(self.images)):
+            im = self.images[i]
+            selectImageAction = QAction(im.title, self)  
+            selectImageAction.triggered.connect(self.select_image) 
+            self.menuSelection.addAction(selectImageAction)
+       
     def create_file_menu(self):
         self.menuFile = self.menubar.addMenu('File')
         
