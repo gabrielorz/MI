@@ -1,3 +1,4 @@
+""" AUTHOR: GABRIEL GARCIA """
 """
 A class containing a list of images
 

@@ -1,3 +1,5 @@
+""" AUTHOR: GABRIEL GARCIA """
+
 from scipy import misc
 from skimage import data
 from scipy import misc
