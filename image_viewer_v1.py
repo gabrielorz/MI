@@ -39,9 +39,10 @@ if __name__ == '__main__':
     images.append(Image.create_procedural('horse'))
     images.append(Image.read_file('./resources/images/brain.jpg'))
     images.append(Image.read_file('./resources/images/spect.png'))
-    images.append(Image.create_circle(100, (255, 0, 0, 255)))
-    images.append(Image.create_circle(100, (255, 0, 0, 255)))
-    """ima.save_ppm('../resources/images/prova')"""
+    ima = Image.create_procedural('face')
+    clip_face = ima.clip_circle((300,650),250)
+    clip_face.save_ppm('./resources/images/clip_face.pnm')
+    images.append(clip_face)
     nrows, ncols = image_configuration(len(images))
     fig, ax = create_fig(nrows, ncols)
     images.render(ax)
