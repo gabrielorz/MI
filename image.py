@@ -2,11 +2,14 @@
 
 from scipy import misc
 from skimage import data
+from skimage import color
+from skimage import exposure
 from scipy import misc
 import numpy as np
 from PIL import Image as IMG
 import os
 import io
+import matplotlib.pyplot as plt
 
 
 class Image:
@@ -37,6 +40,19 @@ class Image:
     def size_2(self):
         ima = self.__ima
         return ima.shape
+
+    def create_histogram(self):
+        im = self.__ima
+        gray = color.rgb2gray(im)
+        y, x = exposure.histogram(gray)
+        fig, ax = plt.subplots(1, 2)
+        ax[0].imshow(im)
+        ax[1].plot(x,y)
+        ax[0].title.set_text(self.title)
+        ax[0].axis('off')
+        ax[1].axis('off')
+        ax[1].title.set_text('Histogram')
+        plt.show()
 
     def nchannels(self):
         length = self.__ima

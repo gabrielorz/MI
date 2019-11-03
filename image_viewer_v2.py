@@ -35,9 +35,11 @@ class MainWindow(QMainWindow):
         self.menubar.setNativeMenuBar(False)
         self.create_file_menu()
         self.create_image_menu()
+        self.create_tools_menu()
         self.create_selection_menu()
         self.create_filter_menu()
         self.create_help_menu()
+
 
     def create_filter_menu(self):
         self.menuFilter = self.menubar.addMenu('Filter')
@@ -52,17 +54,25 @@ class MainWindow(QMainWindow):
        
     def create_file_menu(self):
         self.menuFile = self.menubar.addMenu('File')
-        
-        readImageAction = QAction(QIcon('read.png'), 'Read image', self)  
+
+        readImageAction = QAction(QIcon('read.png'), 'Read image', self)
         readImageAction.setShortcut('Ctrl+F')
         readImageAction.triggered.connect(self.read_image)
         self.menuFile.addAction(readImageAction)
-        
-        exitAction = QAction(QIcon('exit.png'), 'Exit', self)  
+
+        exitAction = QAction(QIcon('exit.png'), 'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
         self.menuFile.addAction(exitAction)
+
+    def create_tools_menu(self):
+        self.menuTools = self.menubar.addMenu('Tools')
+
+        self.menuCreateHistogram = self.menuTools.addMenu('Create Histogram')
+        histogramAction = QAction(QIcon('resources/icons.png'), 'Uniform', self)
+        histogramAction.triggered.connect(self.create_histogram)
+        self.menuImage.addAction(histogramAction)
 
     def create_image_menu(self):
         self.menuImage = self.menubar.addMenu('Images')
@@ -71,6 +81,8 @@ class MainWindow(QMainWindow):
         """
         Add all the options of the procedural image creation
         """
+        proceduralAction = QAction('Procedural', self)
+        proceduralAction.triggered.connect(self.procedural_image)
         uniformAction = QAction(QIcon('resources/icons.png'), 'Uniform', self)  
         uniformAction.setShortcut('Ctrl+H')
         uniformAction.triggered.connect(self.uniform_image)
@@ -79,7 +91,7 @@ class MainWindow(QMainWindow):
         """ 
         Add rasterization and all other image creation you'll implement 
         """
-        
+
 
     def create_help_menu(self):
         self.menuHelp = self.menubar.addMenu('Help')
@@ -110,7 +122,7 @@ class MainWindow(QMainWindow):
         msgBox.exec_()
         
     def about(self) :
-        text = 'Image viewer by DaniTost@CREB'
+        text = 'Image viewer by Gabriel García'
         msgBox = QMessageBox(self)
         msgBox.setText(text)
         msgBox.exec_()
@@ -127,15 +139,22 @@ class MainWindow(QMainWindow):
         if param.exec_():
             width = int(param.width.text())
             height = int(param.height.text())
-            color = 255, 0, 0   # change that when you'll add a color selector in the widget
+            red = int(param.red.text())
+            green = int(param.green.text())
+            blue = int(param.blue.text())
+            color = (red, green, blue)
             return True, width, height, color
         return False, None, None, None
     
     def uniform_image(self):
         ok, width, height, color = self.get_basic_params()
         if ok:
-            im = Image.create_uniform( width, height, color)
+            im = Image.create_uniform(width, height, color)
             self.add_image(im)
+
+    def create_histogram(self):
+        print('lol')
+
 
     def procedural_image(self):
         name = self.sender().text()
