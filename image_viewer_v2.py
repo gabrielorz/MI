@@ -139,7 +139,8 @@ class MainWindow(QMainWindow):
         if param.exec_():
             width = int(param.width.text())
             height = int(param.height.text())
-            color = param.color
+            "color = tuple(int(param.color[i:i+2], 16) for i in (0, 2, 4))"
+            color = tuple(param.color)
             return True, width, height, color
         return False, None, None, None
     

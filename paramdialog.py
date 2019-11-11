@@ -23,8 +23,8 @@ class ParamImageDialog(QDialog):
         grid.addWidget(QLabel('color'), 2, 0)
         color_button = QPushButton('Open color dialog', self)
         grid.addWidget(color_button, 2, 1)
-        color = color_button.clicked.connect(self.on_click)
-
+        color = self.on_click_color_dialog
+        color_button.clicked.connect(color)
         self.show()
         box = QDialogButtonBox()
         box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -33,8 +33,10 @@ class ParamImageDialog(QDialog):
         grid.addWidget(box, 3, 0, -1, -1)
         self.setLayout(grid)
 
-    def on_click(self):
+    def on_click_color_dialog(self):
         color = QColorDialog.getColor()
         if color.isValid():
-            print(color.name())
-        return color
+            color = str(color.name())
+            color = color.lstrip('#')
+            color = tuple(int(color[i:i + 2], 16) for i in (0, 2, 4))
+            self.color = color
