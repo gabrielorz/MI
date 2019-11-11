@@ -139,10 +139,7 @@ class MainWindow(QMainWindow):
         if param.exec_():
             width = int(param.width.text())
             height = int(param.height.text())
-            red = int(param.red.text())
-            green = int(param.green.text())
-            blue = int(param.blue.text())
-            color = (red, green, blue)
+            color = param.color
             return True, width, height, color
         return False, None, None, None
     

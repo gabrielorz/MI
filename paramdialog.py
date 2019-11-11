@@ -20,9 +20,12 @@ class ParamImageDialog(QDialog):
         grid.addWidget(QLabel('height'), 1, 0)
         self.height = QLineEdit()
         grid.addWidget(self.height, 1, 1)
-        """
-        Investigate how to get a color dialog
-        """
+        grid.addWidget(QLabel('color'), 2, 0)
+        color_button = QPushButton('Open color dialog', self)
+        grid.addWidget(color_button, 2, 1)
+        color = color_button.clicked.connect(self.on_click)
+
+        self.show()
         box = QDialogButtonBox()
         box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         box.accepted.connect(self.accept)
@@ -30,6 +33,8 @@ class ParamImageDialog(QDialog):
         grid.addWidget(box, 3, 0, -1, -1)
         self.setLayout(grid)
 
-
-
-            
+    def on_click(self):
+        color = QColorDialog.getColor()
+        if color.isValid():
+            print(color.name())
+        return color
