@@ -40,3 +40,21 @@ class ParamImageDialog(QDialog):
             color = color.lstrip('#')
             color = tuple(int(color[i:i + 2], 16) for i in (0, 2, 4))
             self.color = color
+            
+class GaussianImageDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.initUI()
+        
+    def initUI(self) :
+        grid = QGridLayout()
+        grid.addWidget(QLabel('sigma'), 0, 0)
+        self.sigma = QLineEdit()
+        grid.addWidget(self.sigma, 0, 1)
+        self.show()
+        box = QDialogButtonBox()
+        box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        box.accepted.connect(self.accept)
+        box.rejected.connect(self.close)
+        grid.addWidget(box, 3, 0, -1, -1)
+        self.setLayout(grid)
