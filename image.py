@@ -4,6 +4,7 @@ from scipy import misc
 from skimage import data
 from skimage import color
 from skimage import exposure
+from skimage import filters
 from scipy import misc
 import numpy as np
 from PIL import Image as IMG
@@ -198,3 +199,10 @@ class Image:
                 else:
                     ima[i, j] = (0, 0, 0, 0)
         return cls(ima, 'circle')
+    
+    def gaussian(self, sigma):
+        array_np = filters.gaussian(self.__ima, sigma)
+        title = self.title+'_gauaasiian'
+        return Image(array_np, title)
+    
+    
