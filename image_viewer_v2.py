@@ -14,8 +14,9 @@ from PyQt5.QtGui import QIcon
 from central import CentralWidget
 from imagelist import ImageList
 from image import Image
-from paramdialog import ParamImageDialog
+from paramdialog import *
 from polygonlist import PolygonList
+from skimage import filters
 
 class MainWindow(QMainWindow):
     def __init__(self, *args):
@@ -69,8 +70,9 @@ class MainWindow(QMainWindow):
         for i in range(len(self.images)):
             im = self.images[i]
             selectImageAction = QAction(im.title, self)  
-            selectImageAction.triggered.connect(self.select_image) 
+            selectImageAction.triggered.connect(self.select_image(im.title)) 
             self.menuSelection.addAction(selectImageAction)
+            
        
     def create_file_menu(self):
         self.menuFile = self.menubar.addMenu('File')
@@ -160,22 +162,39 @@ class MainWindow(QMainWindow):
     def get_basic_params(self):
         param = ParamImageDialog(self)
         if param.exec_():
-            width = int(param.width.text())
+            try:
+                width = int(param.width.text())
             height = int(param.height.text())
             color = tuple(param.color)
             return True, width, height, color
         return False, None, None, None
     
+    
     def uniform_image(self):
         ok, width, height, color = self.get_basic_params()
         if ok:
-            im = Image.create_uniform(width, height, color)
-            self.add_image(im)
-    def gaussian_filter(self, sigma):
-        text = 'Option in progress sorry'
-        msgBox = QMessageBox(self)
-        msgBox.setText(text)
-        msgBox.exec_()
+            if width == '' or height == None or color == None:
+                text = 'You need to specify width, height and color in order to create a uniform image'
+                msgBox = QMessageBox(self)
+                msgBox.setText(text)
+                msgBox.exec_()
+                pass
+            else:
+                im = Image.create_uniform(width, height, color)
+                self.add_image(im)
+            
+    def gaussian_filter(self):
+        if self.cur_image == None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            param = GaussianImageDialog(self)
+            if param.exec_():
+                sigma = float(param.sigma.text())
+                filtered_img = self.cur_image.gaussian(sigma)
+                self.add_image(filtered_img)           
         
     def countouring(self):
         text = 'Option in progress sorry'
@@ -216,9 +235,9 @@ class MainWindow(QMainWindow):
         self.images.append(im)
         self.cur_image = im
         self.render_current()
-        addAction = QAction(QIcon('segmentation.png'),self.title, self)
-        addAction.triggered.connect(self.render_current)
-        self.menuSelection.addAction(addAction)
+        addimageAction = QAction(QIcon('segmentation.png'), im.title, self)
+        addimageAction.triggered.connect(self.render_current)
+        self.menuSelection.addAction(addimageAction)
 
 if __name__=='__main__':
     app = QApplication(sys.argv)
