@@ -1,10 +1,11 @@
-""" AUTHOR: GABRIEL GARCIA """
+""" AUTHOR: GABRIEL GARCIA & ARNAU PERA"""
 
 from scipy import misc
 from skimage import data
 from skimage import color
 from skimage import exposure
-from skimage import filters
+from skimage import filters, restoration
+from skimage.util import random_noise
 from scipy import misc
 import numpy as np
 from PIL import Image as IMG
@@ -202,7 +203,25 @@ class Image:
     
     def gaussian(self, sigma):
         array_np = filters.gaussian(self.__ima, sigma)
-        title = self.title+'_gauaasiian'
+        title = self.title+'_gaussian_sigma='+str(sigma)
         return Image(array_np, title)
-    
-    
+
+    def billateral(self):
+        array_np = restoration.denoise_bilateral(self.__ima, multichannel=True)
+        title = self.title+'_billateral'
+        return Image(array_np, title)
+
+    def chambolle(self, weight, epsilon):
+        array_np = restoration.denoise_tv_chambolle(self.__ima, weight, epsilon)
+        title = self.title+'_chambolle_weight='+str(weight)+'_epsilon='+str(epsilon)
+        return Image(array_np, title)
+
+    def wavelet(self):
+        array_np = restoration.denoise_wavelet(self.__ima)
+        title = self.title+'_wavelet'
+        return Image(array_np, title)
+
+    def add_noise(self, sigma):
+        array_np = random_noise(self.__ima, var = sigma**2)
+        title = self.title+'_noisy'
+        return Image(array_np, title)

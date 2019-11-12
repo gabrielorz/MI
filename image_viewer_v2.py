@@ -1,10 +1,4 @@
-"""
-MUEI- ETSEIB
-Medical images- Cur 2019-20-Q1
-Dani Tost
-
-Preliminary version of the interface
-"""
+""" AUTHOR: GABRIEL GARCIA & ARNAU PERA"""
 import sys
 
 from PyQt5.QtCore import Qt, QRect
@@ -46,14 +40,30 @@ class MainWindow(QMainWindow):
         "Menu Filter"
         self.menuFilter = self.menubar.addMenu('Filter')
         "Submenu Denoising"
-        "Action Gaussian blurring"
         self.menuDenoising = self.menuFilter.addMenu('Denoising')
+        "Action Add Noise"
+        noiseAction = QAction(QIcon('gaussian.png'),'Add Noise', self)
+        noiseAction.triggered.connect(self.add_noise)
+        self.menuDenoising.addAction(noiseAction)
+        "Action Gaussian blurring"
         gaussianAction = QAction(QIcon('gaussian.png'),'Gaussian', self)
         gaussianAction.triggered.connect(self.gaussian_filter)
         self.menuDenoising.addAction(gaussianAction)
+        "Action Billateral filtering"
+        billateralAction = QAction(QIcon('gaussian.png'),'Billateral', self)
+        billateralAction.triggered.connect(self.billateral_filter)
+        self.menuDenoising.addAction(billateralAction)
+        "Action Tv-Chambolle filtering"
+        chambolleAction = QAction(QIcon('gaussian.png'),'Tv-Chambolle', self)
+        chambolleAction.triggered.connect(self.chambolle_filter)
+        self.menuDenoising.addAction(chambolleAction)
+        "Action wavelet transforms filtering"
+        waveletAction = QAction(QIcon('gaussian.png'),'Wavelet', self)
+        waveletAction.triggered.connect(self.wavelet_filter)
+        self.menuDenoising.addAction(waveletAction)
         "Submenu Contouring"
-        "Action contouring"
         self.menuContouring = self.menuFilter.addMenu('Countouring')
+        "Action contouring"
         contouringAction = QAction(QIcon('contouring.png'),'Contour algorithm name', self)
         contouringAction.triggered.connect(self.countouring)
         self.menuContouring.addAction(contouringAction)
@@ -69,8 +79,9 @@ class MainWindow(QMainWindow):
         self.menuSelection = self.menubar.addMenu('Selection')
         for i in range(len(self.images)):
             im = self.images[i]
-            selectImageAction = QAction(im.title, self)  
-            selectImageAction.triggered.connect(self.select_image(im.title)) 
+            selectImageAction = QAction(im.title, self)
+            image = self.sender().text()
+            selectImageAction.triggered.connect(self.select_action(image))
             self.menuSelection.addAction(selectImageAction)
             
        
@@ -99,15 +110,16 @@ class MainWindow(QMainWindow):
     def create_image_menu(self):
         self.menuImage = self.menubar.addMenu('Images')
         self.menuProcedural = self.menuImage.addMenu('Procedural')
-        proceduralAction = QAction('Procedural', self)
-        faceAction = QAction(QIcon('gaussian.png'),'face', self)
+        """proceduralAction = QAction('Procedural', self)"""
+        """for key in self.__Image.dic_procedural.keys():"""
+        faceAction = QAction(QIcon('gaussian.png'), 'face', self)
         faceAction.triggered.connect(self.procedural_image)
         self.menuProcedural.addAction(faceAction)
         coffeeAction = QAction(QIcon('gaussian.png'),'coffee', self)
         coffeeAction.triggered.connect(self.procedural_image)
         self.menuProcedural.addAction(coffeeAction)
-        proceduralAction.triggered.connect(self.procedural_image)
-        uniformAction = QAction(QIcon('resources/icons.png'), 'Uniform', self)  
+        """proceduralAction.triggered.connect(self.procedural_image)"""
+        uniformAction = QAction(QIcon('resources/icons.png'), 'Uniform', self)
         uniformAction.setShortcut('Ctrl+H')
         uniformAction.triggered.connect(self.uniform_image)
         self.menuImage.addAction(uniformAction)
@@ -164,8 +176,16 @@ class MainWindow(QMainWindow):
         if param.exec_():
             try:
                 width = int(param.width.text())
-            height = int(param.height.text())
-            color = tuple(param.color)
+            except ValueError:
+                width = None
+            try:
+                height = int(param.height.text())
+            except ValueError:
+                height = None
+            try:
+                color = tuple(param.color)
+            except TypeError:
+                color = None
             return True, width, height, color
         return False, None, None, None
     
@@ -173,18 +193,18 @@ class MainWindow(QMainWindow):
     def uniform_image(self):
         ok, width, height, color = self.get_basic_params()
         if ok:
-            if width == '' or height == None or color == None:
-                text = 'You need to specify width, height and color in order to create a uniform image'
+            if width is None or height is None or color is None:
+                text = 'You need to specify a correct width, height and color in order to create a uniform image'
                 msgBox = QMessageBox(self)
+                msgBox.setWindowTitle("Error! Missing or wrong parameters!")
                 msgBox.setText(text)
                 msgBox.exec_()
-                pass
             else:
                 im = Image.create_uniform(width, height, color)
                 self.add_image(im)
             
     def gaussian_filter(self):
-        if self.cur_image == None:
+        if self.cur_image is None:
             text = 'There is no current Image'
             msgBox = QMessageBox(self)
             msgBox.setText(text)
@@ -194,8 +214,55 @@ class MainWindow(QMainWindow):
             if param.exec_():
                 sigma = float(param.sigma.text())
                 filtered_img = self.cur_image.gaussian(sigma)
-                self.add_image(filtered_img)           
-        
+                self.add_image(filtered_img)
+
+    def billateral_filter(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+           filtered_img = self.cur_image.billateral()
+           self.add_image(filtered_img)
+
+    def chambolle_filter(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            param = ChambolleImageDialog(self)
+            if param.exec_():
+                weight = float(param.weight.text())
+                epsilon = float(param.epsilon.text())
+                filtered_img = self.cur_image.chambolle(weight, epsilon)
+                self.add_image(filtered_img)
+
+    def wavelet_filter(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            filtered_img = self.cur_image.wavelet()
+            self.add_image(filtered_img)
+
+    def add_noise(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            param = NoiseImageDialog(self)
+            if param.exec_():
+                sigma = float(param.sigma.text())
+                filtered_img = self.cur_image.add_noise(sigma)
+                self.add_image(filtered_img)
+
     def countouring(self):
         text = 'Option in progress sorry'
         msgBox = QMessageBox(self)
@@ -223,10 +290,9 @@ class MainWindow(QMainWindow):
         msgBox.exec_()
     
     def select_action(self, name):
-        text = 'Option in progress sorry'
-        msgBox = QMessageBox(self)
-        msgBox.setText(text)
-        msgBox.exec_()
+        index = self.images.index(name)
+        self.cur_image = self.images[index]
+        self.render_current()
     
     def render_current(self):
         self.central.render_image(self.cur_image)
