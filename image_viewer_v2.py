@@ -69,10 +69,14 @@ class MainWindow(QMainWindow):
         self.menuContouring.addAction(contouringAction)
         "Submenu Segmentation"
         self.menuSegmentation = self.menuFilter.addMenu('Segmentation')
-        "Action segmentation"
-        segmentationAction = QAction(QIcon('segmentation.png'),'Segmentation algorithm name', self)
-        segmentationAction.triggered.connect(self.segmentation)
-        self.menuSegmentation.addAction(segmentationAction)
+        "Action  Simple user-given threshold segmentation"
+        usersegmentationAction = QAction(QIcon('segmentation.png'),'User-given threshold', self)
+        usersegmentationAction.triggered.connect(self.user_segmentation)
+        self.menuSegmentation.addAction(usersegmentationAction)
+        "Action Otsu segmentation"
+        otsusegmentationAction = QAction(QIcon('segmentation.png'),'Otsu threshold', self)
+        otsusegmentationAction.triggered.connect(self.otsu_segmentation)
+        self.menuSegmentation.addAction(otsusegmentationAction)
 
         
     def create_selection_menu(self):
@@ -80,8 +84,7 @@ class MainWindow(QMainWindow):
         for i in range(len(self.images)):
             im = self.images[i]
             selectImageAction = QAction(im.title, self)
-            image = self.sender().text()
-            selectImageAction.triggered.connect(self.select_action(image))
+            selectImageAction.triggered.connect(self.select_action(self.sender().text()))
             self.menuSelection.addAction(selectImageAction)
             
        
@@ -110,14 +113,19 @@ class MainWindow(QMainWindow):
     def create_image_menu(self):
         self.menuImage = self.menubar.addMenu('Images')
         self.menuProcedural = self.menuImage.addMenu('Procedural')
+        dict_list = self.call_dict()
+        for image in dict_list:
+            dictAction = QAction(QIcon('dict.png'), image, self)
+            dictAction.triggered.connect(self.procedural_image)
+            self.menuProcedural.addAction(dictAction)
         """proceduralAction = QAction('Procedural', self)"""
         """for key in self.__Image.dic_procedural.keys():"""
-        faceAction = QAction(QIcon('gaussian.png'), 'face', self)
-        faceAction.triggered.connect(self.procedural_image)
-        self.menuProcedural.addAction(faceAction)
-        coffeeAction = QAction(QIcon('gaussian.png'),'coffee', self)
+        """faceAction = QAction(QIcon('gaussian.png'), 'face', self)"""
+        """faceAction.triggered.connect(self.procedural_image)"""
+        """self.menuProcedural.addAction(faceAction)"""
+        """coffeeAction = QAction(QIcon('gaussian.png'),'coffee', self)
         coffeeAction.triggered.connect(self.procedural_image)
-        self.menuProcedural.addAction(coffeeAction)
+        self.menuProcedural.addAction(coffeeAction)"""
         """proceduralAction.triggered.connect(self.procedural_image)"""
         uniformAction = QAction(QIcon('resources/icons.png'), 'Uniform', self)
         uniformAction.setShortcut('Ctrl+H')
@@ -268,16 +276,36 @@ class MainWindow(QMainWindow):
         msgBox = QMessageBox(self)
         msgBox.setText(text)
         msgBox.exec_()
-    def segmentation(self):
-        text = 'Option in progress sorry'
-        msgBox = QMessageBox(self)
-        msgBox.setText(text)
-        msgBox.exec_()
+
+    def user_segmentation(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            param = UserThresholdImageDialog(self)
+            if param.exec_():
+                threshold = float(param.threshold.text())
+                filtered_img = self.cur_image.user_threshold(threshold)
+                self.add_image(filtered_img)
+
+    def otsu_segmentation(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+           filtered_img = self.cur_image.otsu_threshold()
+           self.add_image(filtered_img)
+
     def create_histogram(self):
         text = 'Option in progress sorry'
         msgBox = QMessageBox(self)
         msgBox.setText(text)
         msgBox.exec_()
+
     def procedural_image(self):
         name = self.sender().text()
         im = Image.create_procedural(name)
@@ -290,8 +318,7 @@ class MainWindow(QMainWindow):
         msgBox.exec_()
     
     def select_action(self, name):
-        index = self.images.index(name)
-        self.cur_image = self.images[index]
+        self.cur_image = self.images[name]
         self.render_current()
     
     def render_current(self):
@@ -305,8 +332,12 @@ class MainWindow(QMainWindow):
         addimageAction.triggered.connect(self.render_current)
         self.menuSelection.addAction(addimageAction)
 
+    def call_dict(self):
+        dict_list = Image.call_proc_dict()
+        return dict_list
+
+
 if __name__=='__main__':
     app = QApplication(sys.argv)
     p = MainWindow()
     sys.exit(app.exec_())
-    

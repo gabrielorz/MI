@@ -22,7 +22,7 @@ class PlotCanvas(FigureCanvas):
         self.ax.axis('off')
         self.axes = []
 
-    def render_image(self, ima) :
+    def render_image(self, ima):
         if ima.noaxis:
             self.ax.axis('off')
         else:

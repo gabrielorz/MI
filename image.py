@@ -225,3 +225,20 @@ class Image:
         array_np = random_noise(self.__ima, var = sigma**2)
         title = self.title+'_noisy'
         return Image(array_np, title)
+
+    def user_threshold(self, threshold):
+        array_np = color.rgb2gray(self.__ima)
+        array_np = array_np > threshold/255
+        title = self.title+'_user_threshold'
+        return Image(array_np, title)
+
+    def otsu_threshold(self):
+        array_np = color.rgb2gray(self.__ima)
+        t_otsu = filters.threshold_otsu(array_np)
+        array_np = array_np > t_otsu
+        title = self.title+'_otsu_threshold'
+        return Image(array_np, title)
+
+    @classmethod
+    def call_proc_dict(cls):
+        return cls.dic_procedural.keys()
