@@ -64,9 +64,9 @@ class MainWindow(QMainWindow):
         "Submenu Contouring"
         self.menuContouring = self.menuFilter.addMenu('Countouring')
         "Action contouring"
-        contouringAction = QAction(QIcon('contouring.png'),'Contour algorithm name', self)
-        contouringAction.triggered.connect(self.countouring)
-        self.menuContouring.addAction(contouringAction)
+        sobelAction = QAction(QIcon('contouring.png'),'Sobel Edge Detection', self)
+        sobelAction.triggered.connect(self.sobel_filter)
+        self.menuContouring.addAction(sobelAction)
         "Submenu Segmentation"
         self.menuSegmentation = self.menuFilter.addMenu('Segmentation')
         "Action  Simple user-given threshold segmentation"
@@ -336,6 +336,18 @@ class MainWindow(QMainWindow):
         dict_list = Image.call_proc_dict()
         return dict_list
 
+    def sobel_filter(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            param = SobelImageDialog(self)
+            if param.exec_():
+                direction = param.direction
+                filtered_img = self.cur_image.sobel_filter(direction)
+                self.add_image(filtered_img)
 
 if __name__=='__main__':
     app = QApplication(sys.argv)

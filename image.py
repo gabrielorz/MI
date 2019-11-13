@@ -66,7 +66,10 @@ class Image:
         return channels
 
     def render(self, ax):
-        ax.imshow(self.__ima)
+        if self.nchannels() == 1:
+            ax.imshow(self.__ima, cmap='gray')
+        else:
+            ax.imshow(self.__ima)
         ax.title.set_text(self.title)
         ax.axis('off')
 
@@ -202,7 +205,7 @@ class Image:
         return cls(ima, 'circle')
     
     def gaussian(self, sigma):
-        array_np = filters.gaussian(self.__ima, sigma)
+        array_np = filters.gaussian(self.__ima, sigma, multichannel=False)
         title = self.title+'_gaussian_sigma='+str(sigma)
         return Image(array_np, title)
 
@@ -242,3 +245,18 @@ class Image:
     @classmethod
     def call_proc_dict(cls):
         return cls.dic_procedural.keys()
+
+    def sobel_filter(self, direction):
+        array_np = color.rgb2gray(self.__ima)
+        if direction == 'both':
+            array_np = filters.sobel(array_np)
+            title = self.title + '_sobel'
+        elif direction == 'horizontal':
+            array_np = filters.sobel_h(array_np)
+            title = self.title + 'sobel_h'
+        elif direction == 'vertical':
+            array_np = filters.sobel_v(array_np)
+            title = self.title+'_sobel_v'
+        else:
+            title = self.title
+        return Image(array_np, title)
