@@ -23,6 +23,7 @@ class Image:
         self.noaxis = True
         self.contours = None
         self.hist = None
+        self.cdf = None
 
     def __str__(self):
         return "Image: " + self.title
@@ -49,14 +50,6 @@ class Image:
         im = self.__ima
         gray = color.rgb2gray(im)
         y, x = exposure.histogram(gray)
-        fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(im)
-        ax[1].plot(x,y)
-        ax[0].title.set_text(self.title)
-        ax[0].axis('off')
-        ax[1].axis('off')
-        ax[1].title.set_text('Histogram')
-        plt.show()
 
     def nchannels(self):
         length = self.__ima
