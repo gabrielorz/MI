@@ -7,6 +7,7 @@ Dani Tost- 2019
 """
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QLabel, QGridLayout, QLineEdit, QPushButton, QColorDialog, \
     QWidget, QButtonGroup, QCheckBox, QHBoxLayout
+from PyQt5 import QtCore
 
 
 class ParamImageDialog(QDialog):
@@ -154,17 +155,15 @@ class SobelImageDialog(QDialog):
         grid.addWidget(QLabel('Vertical'), 0, 5)
         vertical = QCheckBox()
         grid.addWidget(vertical, 0, 4)
-        both.setChecked(True)
+        """both.setChecked(True)"""
+        self.direction = 'none'
         choosesobel = QButtonGroup(self)
         choosesobel.addButton(both)
         choosesobel.addButton(horizontal)
         choosesobel.addButton(vertical)
-        if horizontal.isChecked():
-            self.direction = 'horizontal'
-        elif vertical.isChecked():
-            self.direction = 'vertical'
-        else:
-            self.direction = 'both'
+        both.stateChanged.connect(self.checked_both)
+        horizontal.stateChanged.connect(self.checked_horizontal)
+        vertical.stateChanged.connect(self.checked_vertical)
         self.show()
         box = QDialogButtonBox()
         box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -173,6 +172,25 @@ class SobelImageDialog(QDialog):
         grid.addWidget(box, 10, 0, -1, -1)
         box.setWindowTitle("Sobel filter")
         self.setLayout(grid)
+
+    def checked_both(self, state):
+        if state == QtCore.Qt.Checked:
+            self.direction = 'both'
+        else:
+            self.direction = 'none'
+
+    def checked_horizontal(self, state):
+        if state == QtCore.Qt.Checked:
+            self.direction = 'horizontal'
+        else:
+            self.direction = 'none'
+
+    def checked_vertical(self, state):
+        if state == QtCore.Qt.Checked:
+            self.direction = 'vertical'
+        else:
+            self.direction = 'none'
+
 
 class ClipCircleImageDialog(QDialog):
     def __init__(self, parent):
@@ -244,17 +262,17 @@ class MorphologyImageDialog(QDialog):
 
     def initUI(self):
         grid = QGridLayout()
-        grid.addWidget(QLabel('Dilatation'), 0, 1)
-        dilatation = QCheckBox()
+        """grid.addWidget(QLabel('Dilatation'), 0, 1)"""
+        dilatation = QCheckBox('Dilatation')
         grid.addWidget(dilatation, 0, 0)
-        grid.addWidget(QLabel('Opening'), 0, 3)
-        opening = QCheckBox()
+        """grid.addWidget(QLabel('Opening'), 0, 3)"""
+        opening = QCheckBox('Opening')
         grid.addWidget(opening, 0, 2)
-        grid.addWidget(QLabel('Closing'), 0, 5)
-        closing = QCheckBox()
+        """grid.addWidget(QLabel('Closing'), 0, 5)"""
+        closing = QCheckBox('Closing')
         grid.addWidget(closing, 0, 4)
-        grid.addWidget(QLabel('Erode'), 0, 7)
-        erode = QCheckBox()
+        """grid.addWidget(QLabel('Erode'), 0, 7)"""
+        erode = QCheckBox('Erode')
         grid.addWidget(erode, 0, 6)
         """dilatation.setChecked(True)"""
         choosesobel = QButtonGroup(self)
@@ -262,16 +280,21 @@ class MorphologyImageDialog(QDialog):
         choosesobel.addButton(opening)
         choosesobel.addButton(closing)
         choosesobel.addButton(erode)
-        if dilatation.isChecked():
+        dilatation.stateChanged.connect(self.checked_dil)
+        opening.stateChanged.connect(self.checked_open)
+        erode.stateChanged.connect(self.checked_erode)
+        closing.stateChanged.connect(self.checked_closing)
+
+        """if dilat == 1:
             self.direction = 'dilatation'
-        elif opening.isChecked():
+        elif opening.checkState() == QtCore.Qt.Checked:
             self.direction = 'opening'
-        elif erode.isChecked():
+        elif erode.checkState() == QtCore.Qt.Checked:
             self.direction = 'erode'
-        elif closing.isChecked():
+        elif closing.checkState() == QtCore.Qt.Checked:
             self.direction = 'closing'
         else:
-            self.direction = 'none'
+            self.direction = 'none'"""
         self.show()
         box = QDialogButtonBox()
         box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -280,3 +303,27 @@ class MorphologyImageDialog(QDialog):
         grid.addWidget(box, 10, 0, -1, -1)
         box.setWindowTitle("Morphology")
         self.setLayout(grid)
+
+    def checked_dil(self, state):
+        if state == QtCore.Qt.Checked:
+            self.direction = 'dilatation'
+        else:
+            self.direction = 'none'
+
+    def checked_open(self, state):
+        if state == QtCore.Qt.Checked:
+            self.direction = 'open'
+        else:
+            self.direction = 'none'
+
+    def checked_erode(self, state):
+        if state == QtCore.Qt.Checked:
+            self.direction = 'erode'
+        else:
+            self.direction = 'none'
+
+    def checked_closing(self, state):
+        if state == QtCore.Qt.Checked:
+            self.direction = 'closing'
+        else:
+            self.direction = 'none'

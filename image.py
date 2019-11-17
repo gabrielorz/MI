@@ -280,14 +280,14 @@ class Image:
         if direction == 'dilatation':
             array_np = morphology.dilation(array_np)
             title = self.title + '_dilatation'
-        elif direction == 'opening':
+        elif direction == 'open':
             array_np = morphology.opening(array_np)
             title = self.title + '_opening'
         elif direction == 'closing':
             array_np = morphology.closing(array_np)
             title = self.title+'_closing'
         elif direction == 'erode':
-            array_np = morphology.erode(array_np)
+            array_np = morphology.erosion(array_np)
             title = self.title+'_erode'
         else:
             title = self.title
