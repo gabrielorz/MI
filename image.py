@@ -4,7 +4,7 @@ from scipy import misc
 from skimage import data
 from skimage import color
 from skimage import exposure
-from skimage import filters, restoration
+from skimage import filters, restoration,measure
 from skimage.util import random_noise
 from scipy import misc
 import numpy as np
@@ -136,7 +136,7 @@ class Image:
         masked_img = img.copy()
         masked_img[~mask] = 0
         w, h = 0, 0
-        for i in range (masked_img.shape[0]):
+        for i in range(masked_img.shape[0]):
             for j in range(masked_img.shape[1]):
                 if mask[i, j] and j >= w and j >=i:
                     w = j
@@ -260,3 +260,11 @@ class Image:
         else:
             title = self.title
         return Image(array_np, title)
+
+    def find_contours(self, threshold=0.8):
+        array_np = color.rgb2gray(self.__ima)
+        contours = measure.find_contours(array_np, threshold)
+        title = self.title+'_contours'
+        array_np = array_np + contours
+        return Image(array_np, title)
+

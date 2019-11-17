@@ -21,6 +21,9 @@ class ImageList:
 
     def __str__(self):
         return "List of {:} images".format(len(self))
+
+    def index(self, name):
+        return self.__images.index(name)
     
     def append(self, ima):
         self.__images.append(ima)

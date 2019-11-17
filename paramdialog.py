@@ -173,3 +173,26 @@ class SobelImageDialog(QDialog):
         grid.addWidget(box, 10, 0, -1, -1)
         box.setWindowTitle("Sobel filter")
         self.setLayout(grid)
+
+class ClipCircleImageDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        grid = QGridLayout()
+        grid.addWidget(QLabel('Radius'), 1, 0)
+        self.radius = QLineEdit()
+        grid.addWidget(self.radius, 1, 1)
+        grid.addWidget(QLabel('Center'), 0, 0)
+        self.centerx = QLineEdit()
+        grid.addWidget(self.centerx, 0, 1)
+        self.centery = QLineEdit()
+        grid.addWidget(self.centery, 0, 2)
+        self.show()
+        box = QDialogButtonBox()
+        box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        box.accepted.connect(self.accept)
+        box.rejected.connect(self.close)
+        grid.addWidget(box, 3, 0, -1, -1)
+        self.setLayout(grid)

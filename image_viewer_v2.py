@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
         for i in range(len(self.images)):
             im = self.images[i]
             selectImageAction = QAction(im.title, self)
-            selectImageAction.triggered.connect(self.select_action(self.sender().text()))
+            selectImageAction.triggered.connect(self.select_action)
             self.menuSelection.addAction(selectImageAction)
             
        
@@ -104,36 +104,37 @@ class MainWindow(QMainWindow):
 
     def create_tools_menu(self):
         self.menuTools = self.menubar.addMenu('Tools')
-
-        self.menuCreateHistogram = self.menuTools.addMenu('Create Histogram')
-        histogramAction = QAction(QIcon('resources/icons.png'), 'Uniform', self)
+        """Histogram Action"""
+        histogramAction = QAction(QIcon('resources/icons.png'), 'Histogram', self)
         histogramAction.triggered.connect(self.create_histogram)
-        self.menuImage.addAction(histogramAction)
+        self.menuTools.addAction(histogramAction)
+        """Contouring Action"""
+        contouringAction = QAction(QIcon('resources/icons.png'), 'Find Contours', self)
+        contouringAction.triggered.connect(self.contours)
+        self.menuTools.addAction(contouringAction)
 
     def create_image_menu(self):
         self.menuImage = self.menubar.addMenu('Images')
         self.menuProcedural = self.menuImage.addMenu('Procedural')
         dict_list = self.call_dict()
+        """Procedural Action"""
         for image in dict_list:
             dictAction = QAction(QIcon('dict.png'), image, self)
             dictAction.triggered.connect(self.procedural_image)
             self.menuProcedural.addAction(dictAction)
-        """proceduralAction = QAction('Procedural', self)"""
-        """for key in self.__Image.dic_procedural.keys():"""
-        """faceAction = QAction(QIcon('gaussian.png'), 'face', self)"""
-        """faceAction.triggered.connect(self.procedural_image)"""
-        """self.menuProcedural.addAction(faceAction)"""
-        """coffeeAction = QAction(QIcon('gaussian.png'),'coffee', self)
-        coffeeAction.triggered.connect(self.procedural_image)
-        self.menuProcedural.addAction(coffeeAction)"""
-        """proceduralAction.triggered.connect(self.procedural_image)"""
+        """Uniform Action"""
         uniformAction = QAction(QIcon('resources/icons.png'), 'Uniform', self)
         uniformAction.setShortcut('Ctrl+H')
         uniformAction.triggered.connect(self.uniform_image)
         self.menuImage.addAction(uniformAction)
+        """Rasterize Action"""
         rasterizeAction = QAction(QIcon('resources/icons.png'), 'Rasterization', self)
         rasterizeAction.triggered.connect(self.rasterize_image)
         self.menuImage.addAction(rasterizeAction)
+        """Clip Circle Action"""
+        ClipCircleAction = QAction(QIcon('resources/icons.png'), 'Clip Circle', self)
+        ClipCircleAction.triggered.connect(self.clip_circle)
+        self.menuImage.addAction(ClipCircleAction)
 
 
     def create_help_menu(self):
@@ -317,20 +318,32 @@ class MainWindow(QMainWindow):
         msgBox.setText(text)
         msgBox.exec_()
     
-    def select_action(self, name):
-        self.cur_image = self.images[name]
+    def select_action(self):
+        name = self.sender().text()
+        dicc = self.diccionario()
+        index = dicc[name]
+        self.cur_image = self.images[index]
         self.render_current()
     
     def render_current(self):
         self.central.render_image(self.cur_image)
+
+    def diccionario(self):
+        dicc = {}
+        n = 0
+        for im in self.images:
+            dicc[im.title] = n
+            n = n +1
+        return dicc
         
     def add_image(self, im):
         self.images.append(im)
         self.cur_image = im
         self.render_current()
         addimageAction = QAction(QIcon('segmentation.png'), im.title, self)
-        addimageAction.triggered.connect(self.render_current)
+        addimageAction.triggered.connect(self.select_action)
         self.menuSelection.addAction(addimageAction)
+
 
     def call_dict(self):
         dict_list = Image.call_proc_dict()
@@ -348,6 +361,30 @@ class MainWindow(QMainWindow):
                 direction = param.direction
                 filtered_img = self.cur_image.sobel_filter(direction)
                 self.add_image(filtered_img)
+
+    def clip_circle(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            param = ClipCircleImageDialog(self)
+            if param.exec_():
+                center = (int(param.centerx.text()), int(param.centery.text()))
+                radius = int(param.radius.text())
+                filtered_img = self.cur_image.clip_circle_smart(center, radius)
+                self.add_image(filtered_img)
+    def contours(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            filtered_img = self.cur_image.find_contours
+            self.add_image(filtered_img)
+
 
 if __name__=='__main__':
     app = QApplication(sys.argv)
