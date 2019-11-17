@@ -196,3 +196,87 @@ class ClipCircleImageDialog(QDialog):
         box.rejected.connect(self.close)
         grid.addWidget(box, 3, 0, -1, -1)
         self.setLayout(grid)
+
+class ContrastStretchImageDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self) :
+        grid = QGridLayout()
+        grid.addWidget(QLabel('Minimum Percentile'), 0, 0)
+        self.pmin = QLineEdit()
+        grid.addWidget(self.pmin, 0, 1)
+        grid.addWidget(QLabel('Maximum Percentile'), 1, 0)
+        self.pmax = QLineEdit()
+        grid.addWidget(self.pmax, 1, 1)
+        self.show()
+        box = QDialogButtonBox()
+        box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        box.accepted.connect(self.accept)
+        box.rejected.connect(self.close)
+        grid.addWidget(box, 3, 0, -1, -1)
+        self.setLayout(grid)
+
+class SaveImageDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self) :
+        grid = QGridLayout()
+        grid.addWidget(QLabel('Save as'), 0, 0)
+        self.filename = QLineEdit()
+        grid.addWidget(self.filename, 0, 1)
+        self.show()
+        box = QDialogButtonBox()
+        box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        box.accepted.connect(self.accept)
+        box.rejected.connect(self.close)
+        grid.addWidget(box, 3, 0, -1, -1)
+        self.setLayout(grid)
+
+class MorphologyImageDialog(QDialog):
+
+    def __init__(self,parent):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        grid = QGridLayout()
+        grid.addWidget(QLabel('Dilatation'), 0, 1)
+        dilatation = QCheckBox()
+        grid.addWidget(dilatation, 0, 0)
+        grid.addWidget(QLabel('Opening'), 0, 3)
+        opening = QCheckBox()
+        grid.addWidget(opening, 0, 2)
+        grid.addWidget(QLabel('Closing'), 0, 5)
+        closing = QCheckBox()
+        grid.addWidget(closing, 0, 4)
+        grid.addWidget(QLabel('Erode'), 0, 7)
+        erode = QCheckBox()
+        grid.addWidget(erode, 0, 6)
+        """dilatation.setChecked(True)"""
+        choosesobel = QButtonGroup(self)
+        choosesobel.addButton(dilatation)
+        choosesobel.addButton(opening)
+        choosesobel.addButton(closing)
+        choosesobel.addButton(erode)
+        if dilatation.isChecked():
+            self.direction = 'dilatation'
+        elif opening.isChecked():
+            self.direction = 'opening'
+        elif erode.isChecked():
+            self.direction = 'erode'
+        elif closing.isChecked():
+            self.direction = 'closing'
+        else:
+            self.direction = 'none'
+        self.show()
+        box = QDialogButtonBox()
+        box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        box.accepted.connect(self.accept)
+        box.rejected.connect(self.close)
+        grid.addWidget(box, 10, 0, -1, -1)
+        box.setWindowTitle("Morphology")
+        self.setLayout(grid)

@@ -61,12 +61,20 @@ class MainWindow(QMainWindow):
         waveletAction = QAction(QIcon('gaussian.png'),'Wavelet', self)
         waveletAction.triggered.connect(self.wavelet_filter)
         self.menuDenoising.addAction(waveletAction)
+        "Action Contrast Stretching"
+        ContrastStretchAction = QAction(QIcon('gaussian.png'),'Stretch Contrast', self)
+        ContrastStretchAction.triggered.connect(self.contrast_stretch)
+        self.menuFilter.addAction(ContrastStretchAction)
         "Submenu Contouring"
         self.menuContouring = self.menuFilter.addMenu('Countouring')
         "Action contouring"
         sobelAction = QAction(QIcon('contouring.png'),'Sobel Edge Detection', self)
         sobelAction.triggered.connect(self.sobel_filter)
         self.menuContouring.addAction(sobelAction)
+        "Morphology"
+        MorphologyAction = QAction(QIcon('contouring.png'),'Morphology', self)
+        MorphologyAction.triggered.connect(self.morphology)
+        self.menuFilter.addAction(MorphologyAction)
         "Submenu Segmentation"
         self.menuSegmentation = self.menuFilter.addMenu('Segmentation')
         "Action  Simple user-given threshold segmentation"
@@ -95,6 +103,11 @@ class MainWindow(QMainWindow):
         readImageAction.setShortcut('Ctrl+F')
         readImageAction.triggered.connect(self.read_image)
         self.menuFile.addAction(readImageAction)
+
+        SaveImageAction = QAction(QIcon('read.png'), 'Save current image', self)
+        SaveImageAction.setShortcut('Ctrl+S')
+        SaveImageAction.triggered.connect(self.save_image)
+        self.menuFile.addAction(SaveImageAction)
 
         exitAction = QAction(QIcon('exit.png'), 'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
@@ -373,7 +386,7 @@ class MainWindow(QMainWindow):
             if param.exec_():
                 center = (int(param.centerx.text()), int(param.centery.text()))
                 radius = int(param.radius.text())
-                filtered_img = self.cur_image.clip_circle_smart(center, radius)
+                filtered_img = self.cur_image.clip_circle(center, radius)
                 self.add_image(filtered_img)
     def contours(self):
         if self.cur_image is None:
@@ -385,6 +398,79 @@ class MainWindow(QMainWindow):
             filtered_img = self.cur_image.find_contours
             self.add_image(filtered_img)
 
+    def contrast_stretch(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            param = ContrastStretchImageDialog(self)
+            pmin = 0
+            pmax = 100
+            if param.exec_():
+                try:
+                    pmin = int(param.pmin.text())
+                    if pmin < 0 or pmin > 100:
+                        text = 'Minimum percentile should be a number between 0 and 100'
+                        msgBox = QMessageBox(self)
+                        msgBox.setText(text)
+                        msgBox.exec_()
+                except ValueError:
+                    text = 'Percentiles should be a number between 0 and 100'
+                    msgBox = QMessageBox(self)
+                    msgBox.setText(text)
+                    msgBox.exec_()
+                try:
+                    pmax = int(param.pmax.text())
+                    if pmax < 0 or pmax > 100:
+                        text = 'Maximum percentile should be a number between 0 and 100'
+                        msgBox = QMessageBox(self)
+                        msgBox.setText(text)
+                        msgBox.exec_()
+                except ValueError:
+                    text = 'Percentiles should be a number between 0 and 100'
+                    msgBox = QMessageBox(self)
+                    msgBox.setText(text)
+                    msgBox.exec_()
+                filtered_img = self.cur_image.contrast_stretch(pmin, pmax)
+                self.add_image(filtered_img)
+
+    def save_image(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            param = SaveImageDialog(self)
+            filename = 'currentimage'
+            if param.exec_():
+                filename = param.filename.text()+'.ppm'
+                self.cur_image.save_ppm(filename)
+                text = 'Saved correctly as '+filename
+                msgBox = QMessageBox(self)
+                msgBox.setText(text)
+                msgBox.exec_()
+
+    def morphology(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            param = MorphologyImageDialog(self)
+            if param.exec_():
+                direction = param.direction
+                if direction == 'none':
+                    text = 'Please select a morphology type'
+                    msgBox = QMessageBox(self)
+                    msgBox.setText(text)
+                    msgBox.exec_()
+                else:
+                    filtered_img = self.cur_image.morphology(direction)
+                    self.add_image(filtered_img)
 
 if __name__=='__main__':
     app = QApplication(sys.argv)

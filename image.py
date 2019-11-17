@@ -4,7 +4,7 @@ from scipy import misc
 from skimage import data
 from skimage import color
 from skimage import exposure
-from skimage import filters, restoration,measure
+from skimage import filters, restoration, measure, morphology
 from skimage.util import random_noise
 from scipy import misc
 import numpy as np
@@ -268,3 +268,27 @@ class Image:
         array_np = array_np + contours
         return Image(array_np, title)
 
+    def contrast_stretch(self, pmin, pmax):
+        array_np = self.__ima
+        p1, p2 = np.percentile(array_np, (pmin, pmax))
+        array_np = exposure.rescale_intensity(array_np, in_range=(p1, p2))
+        title = self.title+'_contrasted_'+str(pmin)+'-'+str(pmax)
+        return Image(array_np, title)
+
+    def morphology(self, direction):
+        array_np = color.rgb2gray(self.__ima)
+        if direction == 'dilatation':
+            array_np = morphology.dilation(array_np)
+            title = self.title + '_dilatation'
+        elif direction == 'opening':
+            array_np = morphology.opening(array_np)
+            title = self.title + '_opening'
+        elif direction == 'closing':
+            array_np = morphology.closing(array_np)
+            title = self.title+'_closing'
+        elif direction == 'erode':
+            array_np = morphology.erode(array_np)
+            title = self.title+'_erode'
+        else:
+            title = self.title
+        return Image(array_np, title)
