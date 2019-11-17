@@ -327,3 +327,22 @@ class MorphologyImageDialog(QDialog):
             self.direction = 'closing'
         else:
             self.direction = 'none'
+
+
+class ContoursImageDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        grid = QGridLayout()
+        grid.addWidget(QLabel('Threshold'), 0, 0)
+        self.threshold = QLineEdit()
+        grid.addWidget(self.threshold, 0, 1)
+        self.show()
+        box = QDialogButtonBox()
+        box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        box.accepted.connect(self.accept)
+        box.rejected.connect(self.close)
+        grid.addWidget(box, 3, 0, -1, -1)
+        self.setLayout(grid)

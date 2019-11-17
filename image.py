@@ -21,6 +21,7 @@ class Image:
         self.title = title
         self.__ima = ima
         self.noaxis = True
+        self.contours = None
 
     def __str__(self):
         return "Image: " + self.title
@@ -70,6 +71,9 @@ class Image:
             ax.imshow(self.__ima, cmap='gray')
         else:
             ax.imshow(self.__ima)
+        if self.contours is not None:
+            for contour in self.contours:
+                ax.plot(contour[:, 1], contour[:, 0], linewidth=2)
         ax.title.set_text(self.title)
         ax.axis('off')
 
@@ -264,9 +268,10 @@ class Image:
     def find_contours(self, threshold=0.8):
         array_np = color.rgb2gray(self.__ima)
         contours = measure.find_contours(array_np, threshold)
-        title = self.title+'_contours'
-        array_np = array_np + contours
-        return Image(array_np, title)
+        title = self.title + '_contours'
+        img = Image(self.__ima, title)
+        img.contours = contours
+        return img
 
     def contrast_stretch(self, pmin, pmax):
         array_np = self.__ima

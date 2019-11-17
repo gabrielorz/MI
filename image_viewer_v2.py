@@ -395,8 +395,19 @@ class MainWindow(QMainWindow):
             msgBox.setText(text)
             msgBox.exec_()
         else:
-            filtered_img = self.cur_image.find_contours
-            self.add_image(filtered_img)
+            param = UserThresholdImageDialog(self)
+            if param.exec_():
+                try:
+                    threshold = float(param.threshold.text())
+                    filtered_img = self.cur_image.find_contours(threshold)
+                    self.add_image(filtered_img)
+                except ValueError:
+                    text = 'Please insert a number'
+                    msgBox = QMessageBox(self)
+                    msgBox.setText(text)
+                    msgBox.exec_()
+
+            """self.render_current()"""
 
     def contrast_stretch(self):
         if self.cur_image is None:
