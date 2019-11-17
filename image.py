@@ -22,6 +22,7 @@ class Image:
         self.__ima = ima
         self.noaxis = True
         self.contours = None
+        self.hist = None
 
     def __str__(self):
         return "Image: " + self.title

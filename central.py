@@ -17,4 +17,5 @@ class CentralWidget(QWidget) :
         self.setLayout(self.layout)
         
     def render_image(self, ima):
+        self.visuwidget.clear()
         self.visuwidget.render_image(ima)

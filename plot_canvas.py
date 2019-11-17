@@ -18,22 +18,33 @@ class PlotCanvas(FigureCanvas):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
         super().__init__(self.fig)
         self.setParent(parent)
-        self.ax = self.fig.add_subplot(1, 1, 1)
+        self.ax = self.fig.subplots(1, 1)
         self.ax.axis('off')
-        self.axes = []
+        self.axes = [self.ax]
 
     def render_image(self, ima):
-        if ima.noaxis:
-            self.ax.axis('off')
+        if ima.hist is None:
+            self.ax = self.fig.subplots(1, 1)
+            self.axes = [self.ax]
         else:
-            self.ax.axis('on')
-        ima.render(self.ax)
+            self.ax = self.fig.subplots(1, 2)
+            self.ax[1].plot(ima.hist[1][:], ima.hist[0][:], '-blue')
+            twin_ax = self.ax[1].twinx()
+            twin_ax.plot(ima.cdf[1][:], ima.cdf[0][:], '-red')
+            self.axes = [self.ax[0], self.ax[1], twin_ax]
+        if ima.noaxis:
+            self.axes[0].axis('off')
+        else:
+            self.axes[0].axis('on')
+        ima.render(self.axes[0])
         self.draw()
         
     def refresh(self):
         self.draw()
 
-    def clear(self, i) :
-        self.ax.clear()
+    def clear(self):
+        for ax in self.axes:
+            ax.clear()
+            self.fig.delaxes(ax)
         self.draw()
  
