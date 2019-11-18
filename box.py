@@ -27,18 +27,20 @@ class Box2D:
         """
         if self.aspect_ratio() != asp:
             new_asp = asp/self.aspect_ratio()
-            if new_asp <= 1:
-                xmin = self.xmin
-                xmax = self.xmax
-                new_height = self.height * new_asp - self.height
-                ymin = self.ymin-abs(new_height/2)
-                ymax = self.ymax+abs(new_height/2)
+            xmin = self.xmin
+            ymin = self.ymin
+            xmax = self.xmax
+            ymax = self.ymax
+            if new_asp > 1:
+                new_height = self.height
+                new_width = asp*self.height
             else:
-                ymin = self.ymin
-                ymax = self.ymax
-                new_width = self.width * new_asp - self.width
-                xmin = self.xmin-abs(new_width/2)
-                xmax = self.xmax+abs(new_width/2)
+                new_width = self.width
+                new_height = self.width/asp
+            xmin = (xmax+xmin-new_width)/2
+            ymin = (ymax+ymin-new_height)/2
+            xmax = xmin + new_width
+            ymax = ymin + new_height
         else:
             xmin = self.xmin
             ymin = self.ymin
