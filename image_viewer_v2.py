@@ -315,10 +315,8 @@ class MainWindow(QMainWindow):
            self.add_image(filtered_img)
 
     def create_histogram(self):
-        text = 'Option in progress sorry'
-        msgBox = QMessageBox(self)
-        msgBox.setText(text)
-        msgBox.exec_()
+        filtered_img = self.cur_image.create_histogram()
+        self.add_image(filtered_img)
 
     def procedural_image(self):
         name = self.sender().text()

@@ -49,7 +49,8 @@ class Image:
     def create_histogram(self):
         im = self.__ima
         gray = color.rgb2gray(im)
-        y, x = exposure.histogram(gray)
+        self.hist = exposure.histogram(gray)
+
 
     def nchannels(self):
         length = self.__ima
@@ -177,6 +178,26 @@ class Image:
         path = name.rstrip(os.sep)
         name = os.path.basename(path)
         return cls(arr, name)
+
+    """"@classmethod
+    def create_rasterization(cls, width, height, color, pol_list, name):
+    nchannels = len(color)
+    ima = np.zeros((height, width, nchannels), dtype=np.uint8)
+    ima[:, :] = color
+    bbox = pol_list.bounding_box()
+    bbox = bbox.fitting_window(width/height)
+    w = bbox.width
+    h = bbox.height
+    tx = 0.5*(bbox.xmax + bbox.xmin)
+    ty = 0.5*(bbox.ymax + bbox.ymin)
+    s = width/w
+    for polygon in range(len(pol_list)):
+        p_color = tuple(pol_list[polygon].color)
+        x, y = pol_list[polygon].rasterize((s,-s,-tx*s+width/2, ty*s+height/2))
+        p_vert = np.zeros(2*len(x))
+        p_vert[0:2 * len(x):2] = x
+        p_vert[1:2 * len(x):2] =
+        ima1 = ImageDraw.Draw(ima)"""
 
     @classmethod
     def create_procedural(cls, name):
