@@ -85,6 +85,10 @@ class MainWindow(QMainWindow):
         otsusegmentationAction = QAction(QIcon('segmentation.png'),'Otsu threshold', self)
         otsusegmentationAction.triggered.connect(self.otsu_segmentation)
         self.menuSegmentation.addAction(otsusegmentationAction)
+        "Action Histogram Equalization"
+        EquAction = QAction(QIcon('resources/icons.png'), 'Histogram Equalization', self)
+        EquAction.triggered.connect(self.histogram_equalization)
+        self.menuFilter.addAction(EquAction)
 
         
     def create_selection_menu(self):
@@ -340,6 +344,16 @@ class MainWindow(QMainWindow):
             msgBox.exec_()
         else:
             filtered_img = self.cur_image.create_histogram()
+            self.add_image(filtered_img)
+
+    def histogram_equalization(self):
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            filtered_img = self.cur_image.histogram_equalization()
             self.add_image(filtered_img)
 
     def procedural_image(self):

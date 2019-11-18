@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 
 class Image:
-    dic_procedural = {'coffee': data.coffee, 'astronaut': data.astronaut, 'ascent': misc.ascent, 'face': misc.face, 'camera': data.camera,  'checkerboard': data.checkerboard, 'clock': data.clock, 'coins': data.coins,  'horse': data.horse}
+    dic_procedural = {'coffee': data.coffee, 'astronaut': data.astronaut, 'ascent': misc.ascent, 'face': misc.face, 'camera': data.camera,  'checkerboard': data.checkerboard, 'clock': data.clock, 'coins': data.coins,  'horse': data.horse, 'moon':data.moon}
 
     def __init__(self, ima, title):
         self.title = title
@@ -50,10 +50,30 @@ class Image:
 
     def create_histogram(self):
         im = self.__ima
-        gray = color.rgb2gray(im)
+        if self.nchannels() != 1:
+            gray = color.rgb2gray(im)
+            gray = gray*256
+        else:
+            gray = im
         title = self.title + '_histogram'
         histogram = exposure.histogram(gray)
-        cdf = exposure.cumulative_distribution(gray)
+        cdf = exposure.cumulative_distribution(gray, 256)
+        gray = Image(gray, title)
+        gray.histogram = histogram
+        gray.cdf = cdf
+        return gray
+
+    def histogram_equalization(self):
+        im = self.__ima
+        if self.nchannels() != 1:
+            gray = color.rgb2gray(im)
+            gray = gray*256
+        else:
+            gray = im
+        title = self.title + '_equalized_histogram'
+        gray = exposure.equalize_hist(gray)
+        histogram = exposure.histogram(gray)
+        cdf = exposure.cumulative_distribution(gray, 256)
         gray = Image(gray, title)
         gray.histogram = histogram
         gray.cdf = cdf
