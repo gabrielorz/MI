@@ -189,25 +189,38 @@ class Image:
 
     @classmethod
     def create_rasterization(cls, width, height, color, pol_list, name):
-        nchannels = len(color)
-        ima = np.zeros((height, width, nchannels), dtype=np.uint8)
-        ima[:, :] = color
-        bbox = pol_list.bounding_box()
-        bbox = bbox.fitting_window(width/height)
-        w = bbox.width
-        tx = 0.5*(bbox.xmax + bbox.xmin)
-        ty = 0.5*(bbox.ymax + bbox.ymin)
+        ima = IMG.new('RGB', (width,height), color)
+        bb = pol_list.bounding_box()
+        bb = bb.fitting_window(width/height)
+        w = bb.xmax-bb.xmin
+        tx = (bb.xmax+bb.xmin)/2
+        ty = (bb.ymax+bb.ymin)/2
         s = width/w
-        for polygon in range(len(pol_list)):
-            pol_col = tuple(pol_list[polygon].color)
-            x, y = pol_list[polygon].rasterize((s, -s, -tx*s+width/2, ty*s+height/2))
-            """p_vert = np.zeros(2*len(x))
-            p_vert[0:2 * len(x):2] = x
-            p_vert[1:2 * len(x):2] = y"""
-            line = skimage.draw.line(x, y)
-            ima[line[0]. line[1]] = pol_col
-            """ima_for.polygon(p_vert.tolist(), outline = pol_col, fill = pol_col)"""
-        """ima = np.array(ima)"""
+        for poli in range(len(pol_list)):
+            p_color = tuple(pol_list[poli].color)
+            x, y = pol_list[poli].rasterize((s, -s, -tx*s+width/2, ty*s+height/2))
+            vertex = np.zeros(2*len(x))
+            for i in range(2*len(x)):
+                if not i % 2:
+                    vertex[i] = x[int(i/2)]
+                else:
+                    vertex[i] = y[int(i/2)]
+            pol = IMGDRAW.Draw(ima)
+            pol.polygon(vertex.tolist(), outline=p_color, fill=p_color)
+        ima = np.array(ima)
+        """for l in range(len(x)-1):
+                line = skimage.draw.line(x[l], x[l+1], y[l], y[l+1])
+                try:
+                    ima[line[0], line[1]] = p_color
+                except IndexError:
+                    line_x = line[0][:-1]
+                    line_y = line[1][:-1]
+                    ima[line_x, line_y] = p_color
+            line = skimage.draw.line(x[l+1], x[0], y[l+1], y[0])
+            try:
+                ima[line[0], line[1]] = p_color
+            except IndexError:
+                ima[line[0][:-2], line[1][:-2]] = p_color"""
         return cls(ima, name)
 
     @classmethod
