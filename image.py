@@ -70,14 +70,14 @@ class Image:
             gray = gray*256
         else:
             gray = im
-        title = self.title + '_equalized_histogram'
+        title = self.title + '_equalized'
         gray = exposure.equalize_hist(gray)
         gray = gray*256
-        histogram = exposure.histogram(gray)
-        cdf = exposure.cumulative_distribution(gray, 256)
+        """histogram = exposure.histogram(gray)
+        cdf = exposure.cumulative_distribution(gray, 256)"""
         gray = Image(gray, title)
-        gray.histogram = histogram
-        gray.cdf = cdf
+        """gray.histogram = histogram
+        gray.cdf = cdf"""
         return gray
 
 
