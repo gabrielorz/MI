@@ -35,7 +35,7 @@ class Polygon:
         else:
             return Box2D(0, 0, 1, 1)
 
-    def rasterize(self, tr) :
+    def rasterize(self, tr):
         """
         Returns the list of rasterized vertices
         given a rasterization transformation matrix (sx, sy, tx, ty)

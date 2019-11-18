@@ -210,6 +210,24 @@ class MainWindow(QMainWindow):
                 color = None
             return True, width, height, color
         return False, None, None, None
+
+    def get_basic_params_raster(self):
+        param = PolygonImageDialog(self)
+        if param.exec_():
+            try:
+                width = int(param.width.text())
+            except ValueError:
+                width = None
+            try:
+                height = int(param.height.text())
+            except ValueError:
+                height = None
+            try:
+                color = tuple(param.color)
+            except TypeError:
+                color = None
+            return True, width, height, color
+        return False, None, None, None
     
     
     def uniform_image(self):
@@ -315,8 +333,14 @@ class MainWindow(QMainWindow):
            self.add_image(filtered_img)
 
     def create_histogram(self):
-        filtered_img = self.cur_image.create_histogram()
-        self.add_image(filtered_img)
+        if self.cur_image is None:
+            text = 'There is no current Image'
+            msgBox = QMessageBox(self)
+            msgBox.setText(text)
+            msgBox.exec_()
+        else:
+            filtered_img = self.cur_image.create_histogram()
+            self.add_image(filtered_img)
 
     def procedural_image(self):
         name = self.sender().text()
@@ -324,11 +348,14 @@ class MainWindow(QMainWindow):
         self.add_image(im)
 
     def rasterize_image(self):
-        text = 'Option in progress sorry'
-        msgBox = QMessageBox(self)
-        msgBox.setText(text)
-        msgBox.exec_()
-    
+        options = QFileDialog.Options()
+        filename, ok = QFileDialog.getOpenFileName(self, "Read image file", "", "", options=options)
+        if ok:
+            plist = PolygonList.FromJson(filename)
+            ok, width, height, color = self.get_basic_params_raster()
+            if ok:
+                self.add_image(Image.create_rasterization(width, height, color, plist, 'rasterization'))
+
     def select_action(self):
         name = self.sender().text()
         dicc = self.diccionario()

@@ -23,14 +23,14 @@ class PlotCanvas(FigureCanvas):
         self.axes = [self.ax]
 
     def render_image(self, ima):
-        if ima.hist is None:
+        if ima.histogram is None:
             self.ax = self.fig.subplots(1, 1)
             self.axes = [self.ax]
         else:
             self.ax = self.fig.subplots(1, 2)
-            self.ax[1].plot(ima.hist[1][:], ima.hist[0][:], '-blue')
+            self.ax[1].plot(ima.histogram[1][:], ima.histogram[0][:], 'blue')
             twin_ax = self.ax[1].twinx()
-            twin_ax.plot(ima.cdf[1][:], ima.cdf[0][:], '-red')
+            twin_ax.plot(ima.cdf[1][:], ima.cdf[0][:], 'red')
             self.axes = [self.ax[0], self.ax[1], twin_ax]
         if ima.noaxis:
             self.axes[0].axis('off')

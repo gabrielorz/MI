@@ -1,5 +1,5 @@
 """ AUTHOR: GABRIEL GARCIA & ARNAU PERA"""
-
+import skimage
 from scipy import misc
 from skimage import data
 from skimage import color
@@ -9,6 +9,8 @@ from skimage.util import random_noise
 from scipy import misc
 import numpy as np
 from PIL import Image as IMG
+from PIL import ImageDraw as IMGDRAW
+from skimage.draw import line
 import os
 import io
 import matplotlib.pyplot as plt
@@ -22,7 +24,7 @@ class Image:
         self.__ima = ima
         self.noaxis = True
         self.contours = None
-        self.hist = None
+        self.histogram = None
         self.cdf = None
 
     def __str__(self):
@@ -49,7 +51,13 @@ class Image:
     def create_histogram(self):
         im = self.__ima
         gray = color.rgb2gray(im)
-        self.hist = exposure.histogram(gray)
+        title = self.title + '_histogram'
+        histogram = exposure.histogram(gray)
+        cdf = exposure.cumulative_distribution(gray)
+        gray = Image(gray, title)
+        gray.histogram = histogram
+        gray.cdf = cdf
+        return gray
 
 
     def nchannels(self):
@@ -179,25 +187,28 @@ class Image:
         name = os.path.basename(path)
         return cls(arr, name)
 
-    """"@classmethod
+    @classmethod
     def create_rasterization(cls, width, height, color, pol_list, name):
-    nchannels = len(color)
-    ima = np.zeros((height, width, nchannels), dtype=np.uint8)
-    ima[:, :] = color
-    bbox = pol_list.bounding_box()
-    bbox = bbox.fitting_window(width/height)
-    w = bbox.width
-    h = bbox.height
-    tx = 0.5*(bbox.xmax + bbox.xmin)
-    ty = 0.5*(bbox.ymax + bbox.ymin)
-    s = width/w
-    for polygon in range(len(pol_list)):
-        p_color = tuple(pol_list[polygon].color)
-        x, y = pol_list[polygon].rasterize((s,-s,-tx*s+width/2, ty*s+height/2))
-        p_vert = np.zeros(2*len(x))
-        p_vert[0:2 * len(x):2] = x
-        p_vert[1:2 * len(x):2] =
-        ima1 = ImageDraw.Draw(ima)"""
+        nchannels = len(color)
+        ima = np.zeros((height, width, nchannels), dtype=np.uint8)
+        ima[:, :] = color
+        bbox = pol_list.bounding_box()
+        bbox = bbox.fitting_window(width/height)
+        w = bbox.width
+        tx = 0.5*(bbox.xmax + bbox.xmin)
+        ty = 0.5*(bbox.ymax + bbox.ymin)
+        s = width/w
+        for polygon in range(len(pol_list)):
+            pol_col = tuple(pol_list[polygon].color)
+            x, y = pol_list[polygon].rasterize((s, -s, -tx*s+width/2, ty*s+height/2))
+            """p_vert = np.zeros(2*len(x))
+            p_vert[0:2 * len(x):2] = x
+            p_vert[1:2 * len(x):2] = y"""
+            line = skimage.draw.line(x, y)
+            ima[line[0]. line[1]] = pol_col
+            """ima_for.polygon(p_vert.tolist(), outline = pol_col, fill = pol_col)"""
+        """ima = np.array(ima)"""
+        return cls(ima, name)
 
     @classmethod
     def create_procedural(cls, name):
