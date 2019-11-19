@@ -274,7 +274,10 @@ class Image:
         return Image(array_np, title)
 
     def billateral(self):
-        array_np = restoration.denoise_bilateral(self.__ima, multichannel=True)
+        if self.nchannels() > 1:
+            array_np = restoration.denoise_bilateral(self.__ima, multichannel=True)
+        else:
+            array_np = restoration.denoise_bilateral(self.__ima, multichannel=False)
         title = self.title+'_billateral'
         return Image(array_np, title)
 

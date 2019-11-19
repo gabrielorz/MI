@@ -1,4 +1,4 @@
-""" AUTHOR: GABRIEL GARCIA """
+""" AUTHOR: GABRIEL GARCIA & ARNAU PERA"""
 """
 A class containing a list of images
 

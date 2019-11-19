@@ -141,7 +141,7 @@ class MainWindow(QMainWindow):
             self.menuProcedural.addAction(dictAction)
         """Uniform Action"""
         uniformAction = QAction(QIcon('resources/icons.png'), 'Uniform', self)
-        uniformAction.setShortcut('Ctrl+H')
+        uniformAction.setShortcut('Ctrl+U')
         uniformAction.triggered.connect(self.uniform_image)
         self.menuImage.addAction(uniformAction)
         """Rasterize Action"""
@@ -376,7 +376,7 @@ class MainWindow(QMainWindow):
         index = dicc[name]
         self.cur_image = self.images[index]
         self.render_current()
-    
+
     def render_current(self):
         self.central.render_image(self.cur_image)
 
@@ -385,10 +385,18 @@ class MainWindow(QMainWindow):
         n = 0
         for im in self.images:
             dicc[im.title] = n
-            n = n +1
+            n = n + 1
         return dicc
         
     def add_image(self, im):
+        n = 1
+        dicc = self.diccionario()
+        while im.title in dicc:
+            cifras = len(str(n))
+            if n > 1:
+                im.title = im.title[:-cifras-1]
+            im.title = im.title + '_' + str(n)
+            n = n + 1
         self.images.append(im)
         self.cur_image = im
         self.render_current()
