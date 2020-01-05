@@ -21,6 +21,7 @@ class Image:
 
     def __init__(self, ima, title):
         self.title = title
+        self.name = title
         self.__ima = ima
         self.noaxis = True
         self.contours = None

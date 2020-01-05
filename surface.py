@@ -1,13 +1,16 @@
 import vtk
+import os
+
 class Surface(vtk.vtkActor) :
-    def __init__(self, name, source, mat=None):
+    def __init__(self, name, source,  mat= None):
         super().__init__()
         self.name = name
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputConnection(source.GetOutputPort())
         mapper.ScalarVisibilityOff()
         self.SetMapper(mapper)
-        self.SetProperty(mat)
+        if mat != None:
+            self.SetProperty(mat)
 
     @classmethod
     def from_sphere(cls, center, radius, res, mat=None):
@@ -18,6 +21,25 @@ class Surface(vtk.vtkActor) :
         source.SetPhiResolution(res[1])
         return cls('sphere', source, mat)
 
+
+    @classmethod
+    def read_file(cls, filename, mat=None):
+        reader  = vtk.vtkSTLReader()
+        reader.SetFileName(filename)
+        base_name = os.path.basename(filename)
+        name, extension = os.path.splitext(base_name)
+        surf = cls(name, reader, mat)
+        return surf
+
+
+    @classmethod
+    def from_volume(cls, vol, values, mat):
+        source = vtk.vtkMarchingCubes() 
+        source.SetValue(values[0], values[1])
+        source.SetInputConnection(vol.reader.GetOutputPort())
+        name = vol.name +'-{}-{}'.format(values[0], values[1])
+        return cls(name, source, mat)
+    
     @classmethod
     def from_mobius(cls, mat=None):
         mobius = vtk.vtkParametricMobius()
@@ -33,7 +55,3 @@ class Surface(vtk.vtkActor) :
         reader = vtk.vtkSTLReader()
         reader.SetFileName(filename)
         return cls('file', reader, mat)
-
-
-	
-
