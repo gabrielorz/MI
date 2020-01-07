@@ -22,7 +22,31 @@ class SurfaceMaterial(vtk.vtkProperty):
 
     @classmethod
     def default(cls):
-        return cls('default', (1, 0, 1), 0.7, (1, 1, 1), 0.3, 50, 1)
+        return cls('default', (0.955, 0.637, 0.538), 0.7, (1, 1, 1), 0.8, 50, 1)
+
+    @classmethod
+    def bronze(cls):
+        opac = (1, 1, 1)
+        rgb = (205/255, 127/255, 50/255)
+        return cls('bronze', rgb, 0.5, opac, 0.5,  50, 1)
+
+    @classmethod
+    def copper(cls):
+        opac = ((0, 0), (255, 1))
+        rgb = ((0, (0, 0, 0)), (255, (184, 115, 51)))
+        return cls('copper', rgb, opac, 0.5, 1, 50)
+
+    @classmethod
+    def silver(cls):
+        opac = (1, 1, 1)
+        rgb =(196/255, 202/255, 206/255)
+        return cls('silver', rgb, 0.7, opac, 0.8, 50, 1)
+
+    @classmethod
+    def gold(cls):
+        opac = (1, 1, 1)
+        rgb =(212/255, 175/255, 55/255)
+        return cls('silver', rgb, 0.7, opac, 0.8, 50, 1)
 
 
 class VolumeMaterial(vtk.vtkVolumeProperty):
@@ -54,3 +78,27 @@ class VolumeMaterial(vtk.vtkVolumeProperty):
         opac = ((0, 0), (255, 1))
         rgb = ((0, (0, 0, 0)), (255, (1, 1, 1)))
         return cls('default', rgb, opac, 0.5, 0.3, 50)
+
+    @classmethod
+    def bronze(cls):
+        opac = ((0, 0), (255, 1))
+        rgb = ((0, (0, 0, 0)), (255, (205, 127, 50)))
+        return cls('bronze', rgb, opac, 0.5, 1, 50)
+
+    @classmethod
+    def copper(cls):
+        opac = ((0, 0), (255, 1))
+        rgb = ((0, (0, 0, 0)), (255, (184, 115, 51)))
+        return cls('copper', rgb, opac, 0.5, 1, 50)
+
+    @classmethod
+    def silver(cls):
+        opac = ((0, 0), (255, 1))
+        rgb = ((0, (0, 0, 0)), (255, (196, 202, 206)))
+        return cls('silver', rgb, opac, 0.5, 1, 50)
+
+    @classmethod
+    def gold(cls):
+        opac = ((0, 0), (255, 1))
+        rgb = ((0, (0, 0, 0)), (255, (212, 175, 55)))
+        return cls('gold', rgb, opac, 0.5, 1, 50)

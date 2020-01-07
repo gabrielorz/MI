@@ -418,3 +418,121 @@ class SphereDialog(QDialog):
         box.rejected.connect(self.close)
         grid.addWidget(box, 3, 0, -1, -1)
         self.setLayout(grid)
+
+
+class ExtractSurfaceDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        grid = QGridLayout()
+        grid.addWidget(QLabel('Min Value:'), 0, 0)
+        self.vmin = QLineEdit()
+        grid.addWidget(self.vmin, 0, 1)
+        grid.addWidget(QLabel('Max Value:'), 0, 2)
+        self.vmax = QLineEdit()
+        grid.addWidget(self.vmax, 0, 3)
+
+
+        box = QDialogButtonBox()
+        box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        box.accepted.connect(self.accept)
+        box.rejected.connect(self.close)
+        grid.addWidget(box, 3, 0, -1, -1)
+        self.setLayout(grid)
+
+class SurfaceMaterialDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.initUI()
+
+    def __init__(self,parent):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        grid = QGridLayout()
+        grid.addWidget(QLabel('Bronze'), 0, 1)
+        both = QCheckBox()
+        grid.addWidget(both, 0, 0)
+        grid.addWidget(QLabel('Gold'), 0, 3)
+        horizontal = QCheckBox()
+        grid.addWidget(horizontal, 0, 2)
+        grid.addWidget(QLabel('Silver'), 0, 5)
+        vertical = QCheckBox()
+        grid.addWidget(vertical, 0, 4)
+        self.direction = 'default'
+        choosesobel = QButtonGroup(self)
+        choosesobel.addButton(both)
+        choosesobel.addButton(horizontal)
+        choosesobel.addButton(vertical)
+        both.stateChanged.connect(self.checked_both)
+        horizontal.stateChanged.connect(self.checked_horizontal)
+        vertical.stateChanged.connect(self.checked_vertical)
+        self.show()
+        box = QDialogButtonBox()
+        box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        box.accepted.connect(self.accept)
+        box.rejected.connect(self.close)
+        grid.addWidget(box, 10, 0, -1, -1)
+        box.setWindowTitle("Transfer function")
+        self.setLayout(grid)
+
+    def checked_both(self, state):
+        if state == QtCore.Qt.Checked:
+            self.direction = 'bronze'
+        else:
+            self.direction = 'default'
+
+    def checked_horizontal(self, state):
+        if state == QtCore.Qt.Checked:
+            self.direction = 'gold'
+        else:
+            self.direction = 'default'
+
+    def checked_vertical(self, state):
+        if state == QtCore.Qt.Checked:
+            self.direction = 'silver'
+        else:
+            self.direction = 'default'
+
+class VolumeMaterialDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        grid = QGridLayout()
+        grid.addWidget(QLabel('Vmin:'), 0, 0)
+        self.vmin = QLineEdit()
+        grid.addWidget(self.vmin, 0, 1)
+        grid.addWidget(QLabel('Vmax:'), 0, 2)
+        self.vmax = QLineEdit()
+        grid.addWidget(self.vmax, 0, 3)
+
+        box = QDialogButtonBox()
+        box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        box.accepted.connect(self.accept)
+        box.rejected.connect(self.close)
+        grid.addWidget(box, 3, 0, -1, -1)
+        self.setLayout(grid)
+
+
+class SaveSTLDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        grid = QGridLayout()
+        grid.addWidget(QLabel('Filename'), 0, 0)
+        self.filename = QLineEdit()
+        grid.addWidget(self.filename, 0, 1)
+
+        box = QDialogButtonBox()
+        box.setStandardButtons(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        box.accepted.connect(self.accept)
+        box.rejected.connect(self.close)
+        grid.addWidget(box, 3, 0, -1, -1)
+        self.setLayout(grid)

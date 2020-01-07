@@ -34,6 +34,7 @@ class CentralWidget(QWidget):
         if self.vtkwidget.isHidden():
             self.vtkwidget.setHidden(False)
             self.visuwidget.setHidden(True)
+        self.vtkwidget.remove_all()
         self.vtkwidget.add_surface(surf)
 
     def render_volume(self, vol):

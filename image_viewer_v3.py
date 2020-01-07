@@ -14,6 +14,7 @@ from skimage import filters
 from surface import Surface
 from scene import Scene
 from volume import Volume
+import vtk
 
 class MainWindow(QMainWindow):
     def __init__(self, *args):
@@ -37,20 +38,55 @@ class MainWindow(QMainWindow):
         self.create_image_menu()
         self.create_surface_menu()
         self.create_volume_menu()
+        """self.create_transfer_function_menu()"""
         self.create_tools_menu()
         self.create_selection_menu()
         self.create_filter_menu()
         self.create_help_menu()
 
+    """def create_transfer_function_menu(self):
+        self.menuTF = self.menubar.addMenu('Transfer Functions')
+        bronzeAction = QAction(QIcon('resources/icons.png'), 'Bronze', self)
+        bronzeAction.triggered.connect(self.scene.material('bronze'))
+        self.menuTF.addAction(bronzeAction)"""
+
     def create_surface_menu(self):
         self.menuSurface = self.menubar.addMenu('Surfaces')
-        sphereAction = QAction(QIcon('resources/icons.png'), 'Create sphere', self)
-        sphereAction.triggered.connect(self.sphere)
-        self.menuSurface.addAction(sphereAction)
         mcAction = QAction(QIcon('resources/icons.png'), 'Extract from volume', self)
         mcAction.triggered.connect(self.extract_surface)
         self.menuSurface.addAction(mcAction)
         self.menuSurfaceSelection = self.menuSurface.addMenu('Select')
+
+        """ Predefined surfaces"""
+        self.menuPredSurf = self.menuSurface.addMenu('Predefined surfaces')
+
+        """Sphere"""
+        sphereAction = QAction(QIcon('resources/icons.png'), 'CSphere', self)
+        sphereAction.triggered.connect(self.sphere)
+        self.menuPredSurf.addAction(sphereAction)
+        """Mobius"""
+        mobiusAction = QAction(QIcon('resources/icons.png'), 'Mobius', self)
+        mobiusAction.triggered.connect(self.mobius)
+        self.menuPredSurf.addAction(mobiusAction)
+
+        """Conic Spiral"""
+        conicspiralAction = QAction(QIcon('resources/icons.png'), 'Conic Spiral', self)
+        conicspiralAction.triggered.connect(self.conicspiral)
+        self.menuPredSurf.addAction(conicspiralAction)
+
+        """Boy"""
+        boyAction = QAction(QIcon('resources/icons.png'), 'Boy', self)
+        boyAction.triggered.connect(self.boy)
+        self.menuPredSurf.addAction(boyAction)
+
+        """Cross Cap"""
+        crosscapAction = QAction(QIcon('resources/icons.png'), 'Cross Cap', self)
+        crosscapAction.triggered.connect(self.crosscap)
+        self.menuPredSurf.addAction(crosscapAction)
+
+        STLSaveAction = QAction(QIcon('resources/icons.png'), 'Save stl', self)
+        STLSaveAction.triggered.connect(self.saveSTL)
+        self.menuSurface.addAction(STLSaveAction)
 
     def create_volume_menu(self):
         self.menuVolume = self.menubar.addMenu('Volumes')
@@ -139,11 +175,6 @@ class MainWindow(QMainWindow):
         self.menuFile.addAction(readVolumeAction)
 
         self.menuFile.addSeparator()
-        exitAction = QAction(QIcon('exit.png'), 'Exit', self)
-        exitAction.setShortcut('Ctrl+Q')
-        exitAction.setStatusTip('Exit application')
-        exitAction.triggered.connect(self.close)
-        self.menuFile.addAction(exitAction)
 
         SaveImageAction = QAction(QIcon('read.png'), 'Save current image', self)
         SaveImageAction.setShortcut('Ctrl+S')
@@ -155,7 +186,6 @@ class MainWindow(QMainWindow):
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
         self.menuFile.addAction(exitAction)
-
 
     def create_tools_menu(self):
         self.menuTools = self.menubar.addMenu('Tools')
@@ -532,6 +562,7 @@ class MainWindow(QMainWindow):
                 filtered_img = self.cur_image.contrast_stretch(pmin, pmax)
                 self.add_image(filtered_img)
 
+
     def save_image(self):
         if self.cur_image is None:
             text = 'There is no current Image'
@@ -571,8 +602,13 @@ class MainWindow(QMainWindow):
     def read_surface(self) :
         options = QFileDialog.Options()
         filename, ok = QFileDialog.getOpenFileName(self,"Read surface file", "", "", options=options)
+        param = SurfaceMaterialDialog(self)
+        if param.exec_():
+            color = param.direction
+        else:
+            color = 'default_surface'
         if ok:
-            surface = Surface.read_file(filename, self.scene.material('surface_default'))
+            surface = Surface.read_file(filename, self.scene.material(color))
             if surface is not None:
                 self.add_surface(surface)
             else:
@@ -591,12 +627,18 @@ class MainWindow(QMainWindow):
 
     def extract_surface(self):
         vol = self.scene.cur_volume
+        param = ExtractSurfaceDialog(self)
+        if param.exec_():
+            vmin = int(param.vmin.text())
+            vmax = int(param.vmax.text())
+        else:
+            vmin = 0
+            vmax = 70
         if vol is None:
             reply = QMessageBox.warning(self, 'Error', "No current volume loaded")
             return
         # Put a dialog to get vmin and vmax instead of fixed values 0 70 (suitable for mummy.vtk
-        vmin = 0
-        vmax = 70
+
         surf = Surface.from_volume(vol, (vmin, vmax),  self.scene.material('surface_default'))
         if surf is not None:
             self.add_surface(surf)
@@ -660,12 +702,43 @@ class MainWindow(QMainWindow):
             cx = float(param.x.text())
             cy = float(param.y.text())
             cz = float(param.z.text())
-            rad =  float(param.radius.text())
-            rh =  int(param.resh.text())
-            rv =  int(param.resv.text())
+            rad = float(param.radius.text())
+            rh = int(param.resh.text())
+            rv = int(param.resv.text())
             surface = Surface.from_sphere((cx, cy, cz), rad, (rh, rv), self.scene.material('surface_default'))
-            if surface is not None :
+            if surface is not None:
                 self.add_surface(surface)
+
+    def mobius(self):
+        surface = Surface.from_mobius(mat=None)
+        if surface is not None:
+            self.add_surface(surface)
+
+    def conicspiral(self):
+        surface = Surface.from_conicspiral(mat=None)
+        if surface is not None:
+            self.add_surface(surface)
+
+    def boy(self):
+        surface = Surface.from_boy(mat=None)
+        if surface is not None:
+            self.add_surface(surface)
+
+    def crosscap(self):
+        surface = Surface.from_crosscap(mat=None)
+        if surface is not None:
+            self.add_surface(surface)
+
+    def saveSTL(self):
+        stlWriter = vtk.vtkSTLWriter()
+        options = QFileDialog.Options()
+        filename, ok = QFileDialog.getSaveFileName(self,"Save surface as", "","",options=options)
+        if ok:
+            filename = filename+'stl'
+            stlWriter.SetFileName(filename)
+            stlWriter.SetInputConnection(self.scene.cur_surface.source.GetOutputPort())
+            stlWriter.Write()
+
 
 
 if __name__ == '__main__':

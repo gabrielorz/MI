@@ -8,7 +8,7 @@ class Scene:
         self.cur_surface = None
         self.volumes = ObjectList()
         self.cur_volume = None
-        self.materials = {'surface_default': SurfaceMaterial.default(), 'volume_default': VolumeMaterial.default()}
+        self.materials = {'surface_default': SurfaceMaterial.default(), 'bronze': SurfaceMaterial.bronze(), 'silver': SurfaceMaterial.silver(), 'gold': SurfaceMaterial.gold(), 'volume_default': VolumeMaterial.default()}
         
     def material(self, name='surface_default'):
         return self.materials[name]

@@ -1,20 +1,22 @@
 import vtk
 import os
+from paramdialog import SaveSTLDialog
 
 class Surface(vtk.vtkActor) :
-    def __init__(self, name, source,  mat= None):
+    def __init__(self, name, source,  mat=None):
         super().__init__()
         self.name = name
+        self.source = source
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputConnection(source.GetOutputPort())
         mapper.ScalarVisibilityOff()
         self.SetMapper(mapper)
-        if mat != None:
+        if mat is not None:
             self.SetProperty(mat)
 
     @classmethod
     def from_sphere(cls, center, radius, res, mat=None):
-        source =  vtk.vtkSphereSource()
+        source = vtk.vtkSphereSource()
         source.SetCenter(center)
         source.SetRadius(radius)
         source.SetThetaResolution(res[0])
@@ -24,7 +26,7 @@ class Surface(vtk.vtkActor) :
 
     @classmethod
     def read_file(cls, filename, mat=None):
-        reader  = vtk.vtkSTLReader()
+        reader = vtk.vtkSTLReader()
         reader.SetFileName(filename)
         base_name = os.path.basename(filename)
         name, extension = os.path.splitext(base_name)
@@ -49,9 +51,43 @@ class Surface(vtk.vtkActor) :
         source = vtk.vtkParametricFunctionSource()
         source.SetParametricFunction(mobius)
         return cls('mobius', source, mat)
+
+    @classmethod
+    def from_boy(cls, mat=None):
+        boy = vtk.vtkParametricBoy()
+        source = vtk.vtkParametricFunctionSource()
+        source.SetParametricFunction(boy)
+        return cls('boy', source, mat)
+
+    @classmethod
+    def from_conicspiral(cls, mat=None):
+        conicspiral = vtk.vtkParametricConicSpiral()
+        source = vtk.vtkParametricFunctionSource()
+        source.SetParametricFunction(conicspiral)
+        return cls('conicspiral', source, mat)
+
+    @classmethod
+    def from_crosscap(cls, mat=None):
+        crosscap = vtk.vtkParametricCrossCap()
+        source = vtk.vtkParametricFunctionSource()
+        source.SetParametricFunction(crosscap)
+        return cls('crosscap', source, mat)
     
     @classmethod
     def from_STL_file(cls, filename, mat=None):
         reader = vtk.vtkSTLReader()
         reader.SetFileName(filename)
         return cls('file', reader, mat)
+
+
+    def to_stl(self):
+        writer = vtk.vtkSTLWriter()
+        param = SaveSTLDialog(self)
+        if param.exec_():
+            filename = param.filename
+        else:
+            filename = 'unnamed'
+        writer.SetInputConnection(self.cur_surface.source.GetOutputPort())
+        """writer.SetFileTypeToBinary()"""
+        writer.SetFileName(filename + '.stl')
+        writer.Write()
