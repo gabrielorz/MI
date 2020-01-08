@@ -84,9 +84,7 @@ class MainWindow(QMainWindow):
         crosscapAction.triggered.connect(self.crosscap)
         self.menuPredSurf.addAction(crosscapAction)
 
-        STLSaveAction = QAction(QIcon('resources/icons.png'), 'Save stl', self)
-        STLSaveAction.triggered.connect(self.saveSTL)
-        self.menuSurface.addAction(STLSaveAction)
+
 
     def create_volume_menu(self):
         self.menuVolume = self.menubar.addMenu('Volumes')
@@ -180,6 +178,10 @@ class MainWindow(QMainWindow):
         SaveImageAction.setShortcut('Ctrl+S')
         SaveImageAction.triggered.connect(self.save_image)
         self.menuFile.addAction(SaveImageAction)
+
+        STLSaveAction = QAction(QIcon('resources/icons.png'), 'Save current surface', self)
+        STLSaveAction.triggered.connect(self.saveSTL)
+        self.menuFile.addAction(STLSaveAction)
 
         exitAction = QAction(QIcon('exit.png'), 'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
@@ -639,7 +641,7 @@ class MainWindow(QMainWindow):
             return
         # Put a dialog to get vmin and vmax instead of fixed values 0 70 (suitable for mummy.vtk
 
-        surf = Surface.from_volume(vol, (vmin, vmax),  self.scene.material('surface_default'))
+        surf = Surface.from_volume(vol, (vmin, vmax),  self.scene.material('default'))
         if surf is not None:
             self.add_surface(surf)
         else:
@@ -736,8 +738,11 @@ class MainWindow(QMainWindow):
         if ok:
             filename = filename+'stl'
             stlWriter.SetFileName(filename)
-            stlWriter.SetInputConnection(self.scene.cur_surface.source.GetOutputPort())
-            stlWriter.Write()
+            if self.scene.cur_surface is not None:
+                stlWriter.SetInputConnection(self.scene.cur_surface.source.GetOutputPort())
+                stlWriter.Write()
+            else:
+                reply = QMessageBox.warning(self, 'Error', "Something went wrong")
 
 
 
