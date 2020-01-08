@@ -736,7 +736,7 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         filename, ok = QFileDialog.getSaveFileName(self,"Save surface as", "","",options=options)
         if ok:
-            filename = filename+'stl'
+            filename = filename+'.stl'
             stlWriter.SetFileName(filename)
             if self.scene.cur_surface is not None:
                 stlWriter.SetInputConnection(self.scene.cur_surface.source.GetOutputPort())
